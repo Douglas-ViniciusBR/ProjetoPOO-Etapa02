@@ -207,6 +207,8 @@ public class Main {
     public static void cadastrarProfissional() {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
+        System.out.print("CPF: ");
+        String cpf = sc.nextLine();
         System.out.print("Especialidade (clinica geral/fisioterapia/psicologia/nutricao): ");
         String esp = sc.nextLine();
 
@@ -219,13 +221,13 @@ public class Main {
         int tipo = Integer.parseInt(sc.nextLine());
 
         if (tipo == 1) {
-            profissionais[totalProfissionais] = new Profissional(nome, esp);
+            profissionais[totalProfissionais] = criarProfissional(nome, cpf, esp, tipo, "", 0, null, 0);
         } else if (tipo == 2) {
             System.out.print("Registro: ");
             String reg = sc.nextLine();
             System.out.print("Valor consulta: ");
             double valor = Double.parseDouble(sc.nextLine());
-            profissionais[totalProfissionais] = new Profissional(nome, esp, reg, valor);
+            profissionais[totalProfissionais] = criarProfissional(nome, cpf, esp, tipo, reg, valor, null, 0);
         } else {
             System.out.print("Registro: ");
             String reg = sc.nextLine();
@@ -238,10 +240,36 @@ public class Main {
                 System.out.print("Dia " + (i+1) + ": ");
                 dias[i] = sc.nextLine();
             }
-            profissionais[totalProfissionais] = new Profissional(nome, esp, reg, valor, dias, qtd);
+            profissionais[totalProfissionais] = criarProfissional(nome, cpf, esp, tipo, reg, valor, dias, qtd);
         }
         totalProfissionais++;
         System.out.println("Profissional cadastrado!");
+    }
+
+    private static Profissional criarProfissional(String nome, String cpf, String esp, int tipo,
+                                                  String registro, double valor, String[] dias, int totalDias) {
+        if (esp.equals("clinica geral")) {
+            if (tipo == 1) return new ClinicoGeral(nome, cpf);
+            if (tipo == 2) return new ClinicoGeral(nome, cpf, registro, valor);
+            return new ClinicoGeral(nome, cpf, registro, valor, dias, totalDias);
+        }
+        if (esp.equals("fisioterapia")) {
+            if (tipo == 1) return new Fisioterapeuta(nome, cpf);
+            if (tipo == 2) return new Fisioterapeuta(nome, cpf, registro, valor);
+            return new Fisioterapeuta(nome, cpf, registro, valor, dias, totalDias);
+        }
+        if (esp.equals("psicologia")) {
+            if (tipo == 1) return new Psicologo(nome, cpf);
+            if (tipo == 2) return new Psicologo(nome, cpf, registro, valor);
+            return new Psicologo(nome, cpf, registro, valor, dias, totalDias);
+        }
+        if (esp.equals("nutricao")) {
+            if (tipo == 1) return new Nutricionista(nome, cpf);
+            if (tipo == 2) return new Nutricionista(nome, cpf, registro, valor);
+            return new Nutricionista(nome, cpf, registro, valor, dias, totalDias);
+        }
+        // Caso não seja valida, criar clinico geral padrão como fallback.
+        return new ClinicoGeral(nome, cpf);
     }
 
     public static void atualizarProfissional() {

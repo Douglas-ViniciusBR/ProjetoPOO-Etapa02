@@ -1,13 +1,16 @@
-public class Profissional extends Pessoa {
+// Classe abstrata intermediária representa o conceito geral de um profissional na clínica.
+// A herança de Pessoa para Profissional permite compartilhar os atributos comuns de pessoa,
+// enquanto as subclasses concretas fornecem o comportamento específico de cada especialidade.
+public abstract class Profissional extends Pessoa {
     private String especialidade;
     private String registroProfissional;
     private double valorConsulta;
     private String[] diasDisponiveis;
     private int totalDias;
 
-    // so nome e especialidade
-    public Profissional(String nome, String especialidade) {
-        super(nome, "");
+    // Construtor mínimo com os dados compartilhados de Pessoa e Profissional
+    public Profissional(String nome, String cpf, String especialidade) {
+        super(nome, cpf);
         this.especialidade = especialidade;
         this.registroProfissional = "";
         this.valorConsulta = 0;
@@ -15,8 +18,8 @@ public class Profissional extends Pessoa {
         this.totalDias = 0;
     }
 
-    public Profissional(String nome, String especialidade, String registroProfissional, double valorConsulta) {
-        super(nome, "");
+    public Profissional(String nome, String cpf, String especialidade, String registroProfissional, double valorConsulta) {
+        super(nome, cpf);
         this.especialidade = especialidade;
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
@@ -24,10 +27,10 @@ public class Profissional extends Pessoa {
         this.totalDias = 0;
     }
 
-    // construtor completo com dias
-    public Profissional(String nome, String especialidade, String registroProfissional,
+    // Construtor completo com dias de atendimento
+    public Profissional(String nome, String cpf, String especialidade, String registroProfissional,
                         double valorConsulta, String[] dias, int totalDias) {
-        super(nome, "");
+        super(nome, cpf);
         this.especialidade = especialidade;
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
@@ -83,14 +86,7 @@ public class Profissional extends Pessoa {
         return false;
     }
 
-    @Override
-    public void exibirResumo() {
-        String dias = "";
-        for (int i = 0; i < totalDias; i++) {
-            if (i > 0) dias = dias + ", ";
-            dias = dias + diasDisponiveis[i];
-        }
-        System.out.println("Nome: " + getNome() + " | Espec: " + especialidade + " | Reg: " + registroProfissional
-                + " | Valor: R$" + valorConsulta + " | Dias: " + dias);
-    }
+    // A classe Profissional continua abstrata e força as subclasses a
+    // implementarem o comportamento específico de exibição do resumo.
+    public abstract void exibirResumo();
 }
