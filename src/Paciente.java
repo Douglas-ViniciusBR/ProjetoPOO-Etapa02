@@ -1,14 +1,11 @@
-public class Paciente {
-    public String nome;
-    public String cpf;
-    public int idade;
-    public String telefone;
-    public String convenioNome;
-    public boolean ativo;
+public class Paciente extends Pessoa {
+    private int idade;
+    private String telefone;
+    private String convenioNome;
+    private boolean ativo;
 
     public Paciente(String nome, String cpf) {
-        this.nome = nome;
-        this.cpf = cpf;
+        super(nome, cpf);
         this.idade = 0;
         this.telefone = "";
         this.convenioNome = "";
@@ -16,8 +13,7 @@ public class Paciente {
     }
 
     public Paciente(String nome, String cpf, int idade, String telefone) {
-        this.nome = nome;
-        this.cpf = cpf;
+        super(nome, cpf);
         this.idade = idade;
         this.telefone = telefone;
         this.convenioNome = "";
@@ -26,8 +22,7 @@ public class Paciente {
 
     // construtor com todos os dados
     public Paciente(String nome, String cpf, int idade, String telefone, String convenioNome) {
-        this.nome = nome;
-        this.cpf = cpf;
+        super(nome, cpf);
         this.idade = idade;
         this.telefone = telefone;
         this.convenioNome = convenioNome;
@@ -51,13 +46,27 @@ public class Paciente {
         this.ativo = false;
     }
 
-    public String exibirResumo() {
-        String status = "Sim";
-        if (!ativo) {
-            status = "Nao";
-        }
-        return "Nome: " + nome + " | CPF: " + cpf + " | Idade: " + idade
+    public int getIdade() {
+        return idade;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getConvenioNome() {
+        return convenioNome;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    @Override
+    public void exibirResumo() {
+        String status = ativo ? "Sim" : "Nao";
+        System.out.println("Nome: " + getNome() + " | CPF: " + getCpf() + " | Idade: " + idade
                 + " | Tel: " + telefone + " | Convenio: " + convenioNome
-                + " | Ativo: " + status;
+                + " | Ativo: " + status);
     }
 }
