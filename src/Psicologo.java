@@ -22,4 +22,13 @@ public class Psicologo extends Profissional {
                 + " | Conselho: " + getRegistroProfissional()
                 + " | Especialidade: " + getEspecialidade());
     }
+
+    /**
+     * Usa a representação de `Profissional` para manter consistência entre especialidades.
+     * Serve para exibir rapidamente os dados do profissional.
+     */
+    @Override
+    public String toString() {
+        return "Psicologo{" + super.toString() + "}";
+    }
 }

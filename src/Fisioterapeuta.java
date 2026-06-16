@@ -24,4 +24,13 @@ public class Fisioterapeuta extends Profissional {
                 + " | Conselho: " + getRegistroProfissional()
                 + " | Especialidade: " + getEspecialidade());
     }
+
+    /**
+     * Reutiliza a representação de `Profissional` e identifica a especialidade.
+     * Útil ao imprimir ou registrar objetos desta classe.
+     */
+    @Override
+    public String toString() {
+        return "Fisioterapeuta{" + super.toString() + "}";
+    }
 }

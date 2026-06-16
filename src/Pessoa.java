@@ -30,4 +30,14 @@ public abstract class Pessoa {
     // Metodo abstrato define um comportamento que deve ser implementado
     // por todas as subclasses, sem fornecer a implementacao na classe pai.
     public abstract void exibirResumo();
+
+    /**
+     * Retorna uma representação simples e legível desta pessoa.
+     * Útil para depurar, registrar ou mostrar informações sem
+     * precisar acessar cada campo individualmente.
+     */
+    @Override
+    public String toString() {
+        return "Pessoa{nome='" + nome + "', cpf='" + cpf + "'}";
+    }
 }

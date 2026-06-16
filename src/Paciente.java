@@ -69,4 +69,14 @@ public class Paciente extends Pessoa {
                 + " | Tel: " + telefone + " | Convenio: " + convenioNome
                 + " | Ativo: " + status);
     }
+
+    /**
+     * Retorna uma string com os principais dados do paciente.
+     * Facilita logs, depuração e exibição rápida do estado do objeto.
+     */
+    @Override
+    public String toString() {
+        return "Paciente{nome='" + getNome() + "', cpf='" + getCpf() + "', idade=" + idade
+                + ", telefone='" + telefone + "', convenio='" + convenioNome + "', ativo=" + ativo + "}";
+    }
 }

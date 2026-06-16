@@ -22,4 +22,13 @@ public class ClinicoGeral extends Profissional {
                 + " | Conselho: " + getRegistroProfissional()
                 + " | Especialidade: " + getEspecialidade());
     }
+
+    /**
+     * Mantém o padrão de apresentação entre profissionais e facilita leitura.
+     * Útil ao imprimir ou registrar instâncias.
+     */
+    @Override
+    public String toString() {
+        return "ClinicoGeral{" + super.toString() + "}";
+    }
 }

@@ -22,4 +22,13 @@ public class Nutricionista extends Profissional {
                 + " | Conselho: " + getRegistroProfissional()
                 + " | Especialidade: " + getEspecialidade());
     }
+
+    /**
+     * Usa a string de `Profissional` para apresentação consistente dos dados.
+     * Indicado para logs e exibição de informações.
+     */
+    @Override
+    public String toString() {
+        return "Nutricionista{" + super.toString() + "}";
+    }
 }

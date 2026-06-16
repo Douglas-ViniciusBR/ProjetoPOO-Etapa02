@@ -89,4 +89,15 @@ public abstract class Profissional extends Pessoa {
     // A classe Profissional continua abstrata e força as subclasses a
     // implementarem o comportamento específico de exibição do resumo.
     public abstract void exibirResumo();
+
+    /**
+     * Retorna os dados principais do profissional (nome, cpf,
+     * especialidade, registro e valor da consulta).
+     * Bom para inspeção rápida e geração de relatórios simples.
+     */
+    @Override
+    public String toString() {
+        return "Profissional{nome='" + getNome() + "', cpf='" + getCpf() + "', especialidade='" + especialidade
+                + "', registro='" + registroProfissional + "', valorConsulta=" + valorConsulta + "}";
+    }
 }
