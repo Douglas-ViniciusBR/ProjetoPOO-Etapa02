@@ -794,19 +794,30 @@ public class Main {
         System.out.print("Tipo (dinheiro/cartao/convenio): ");
         String tipoPag = sc.nextLine();
 
+        Pagamento pagamento;
+
         if (tipoPag.equals("cartao")) {
             System.out.print("Parcelas (1 a 3): ");
             int parc = Integer.parseInt(sc.nextLine());
             if (parc < 1) parc = 1;
             if (parc > 3) parc = 3;
-            pagamentos[totalPagamentos] = new Pagamento(idxConsulta, valor, tipoPag, parc);
+            pagamento = new PagamentoCartao(idxConsulta, valor, tipoPag, parc);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
             if (parc > 1) {
-                double vlrParc = Math.round((valor / parc) * 100.0) / 100.0;
+                double vlrParc = Math.round((pagamento.valorFinal / parc) * 100.0) / 100.0;
                 System.out.println("Pagamento em " + parc + "x de R$" + vlrParc);
             }
+        } else if (tipoPag.equals("convenio")) {
+            System.out.print("Percentual de cobertura do convenio (%): ");
+            double cobertura = Double.parseDouble(sc.nextLine());
+            pagamento = new PagamentoConvenio(idxConsulta, valor, tipoPag, cobertura);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
         } else {
-            pagamentos[totalPagamentos] = new Pagamento(idxConsulta, valor, tipoPag);
+            pagamento = new PagamentoDinheiro(idxConsulta, valor, tipoPag);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
         }
+
+        pagamentos[totalPagamentos] = pagamento;
         totalPagamentos++;
         System.out.println("Pagamento registrado!");
     }
@@ -842,13 +853,13 @@ public class Main {
 
         double valorFinal;
         if (temMulta == 1 && desconto == 0) {
-            valorFinal = Pagamento.calcularValor(valorBase);
+            valorFinal = valorBase;
         } else if (temMulta == 1) {
-            valorFinal = Pagamento.calcularValor(valorBase, desconto);
+            valorFinal = valorBase - (valorBase * desconto / 100);
         } else {
             System.out.print("Valor da multa: ");
             valorMulta = Double.parseDouble(sc.nextLine());
-            valorFinal = Pagamento.calcularValor(valorBase, desconto, valorMulta);
+            valorFinal = valorBase - (valorBase * desconto / 100) + valorMulta;
         }
 
         // mostra detalhes
@@ -861,17 +872,28 @@ public class Main {
         System.out.print("Tipo (dinheiro/cartao/convenio): ");
         String tipoPag = sc.nextLine();
 
+        Pagamento pagamento;
+
         if (tipoPag.equals("cartao")) {
             System.out.print("Parcelas (1 a 3): ");
             int parc = Integer.parseInt(sc.nextLine());
             if (parc < 1) parc = 1;
             if (parc > 3) parc = 3;
-            pagamentos[totalPagamentos] = new Pagamento(idxConsulta, valorFinal, tipoPag, parc);
-            double vlrParc = Math.round((valorFinal / parc) * 100.0) / 100.0;
+            pagamento = new PagamentoCartao(idxConsulta, valorFinal, tipoPag, parc);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valorFinal);
+            double vlrParc = Math.round((pagamento.valorFinal / parc) * 100.0) / 100.0;
             System.out.println("Pagamento em " + parc + "x de R$" + vlrParc);
+        } else if (tipoPag.equals("convenio")) {
+            System.out.print("Percentual de cobertura do convenio (%): ");
+            double cobertura = Double.parseDouble(sc.nextLine());
+            pagamento = new PagamentoConvenio(idxConsulta, valorFinal, tipoPag, cobertura);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valorFinal);
         } else {
-            pagamentos[totalPagamentos] = new Pagamento(idxConsulta, valorFinal, tipoPag);
+            pagamento = new PagamentoDinheiro(idxConsulta, valorFinal, tipoPag);
+            pagamento.valorFinal = pagamento.calcularValorFinal(valorFinal);
         }
+
+        pagamentos[totalPagamentos] = pagamento;
         totalPagamentos++;
         System.out.println("Pagamento registrado!");
     }

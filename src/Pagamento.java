@@ -1,4 +1,11 @@
-public class Pagamento {
+/*
+ * Classe abstrata porque um pagamento genérico não possui uma regra única de cálculo.
+ * Não faz sentido criar um objeto "Pagamento" sem definir como ele deve tratar o valor.
+ *
+ * O polimorfismo aparece porque o método calcularValorFinal() pode ter 3 comportamentos
+ * diferentes dependendo da subclasse escolhida: dinheiro, cartão ou convênio.
+ */
+public abstract class Pagamento {
     public int indiceConsulta;
     public double valorFinal;
     public String tipoPagamento;
@@ -11,7 +18,7 @@ public class Pagamento {
         this.parcelas = 1;
     }
 
-    // com parcelas (so pra cartao)
+    // com parcelas (usado principalmente para cartão)
     public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento, int parcelas) {
         this.indiceConsulta = indiceConsulta;
         this.valorFinal = valorFinal;
@@ -19,30 +26,12 @@ public class Pagamento {
         this.parcelas = parcelas;
     }
 
-    // sem desconto nenhum
-    public static double calcularValor(double valorBase) {
-        return valorBase;
-    }
-
-    // com desconto em percentual
-    public static double calcularValor(double valorBase, double percentualDesconto) {
-        double desconto = valorBase * percentualDesconto / 100;
-        double valor = valorBase - desconto;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
-    }
-
-    // com desconto e multa somada
-    public static double calcularValor(double valorBase, double percentualDesconto, double multa) {
-        double desconto = valorBase * percentualDesconto / 100;
-        double valor = valorBase - desconto + multa;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
-    }
+    /**
+     * Método abstrato: cada subclasse implementa sua própria lógica.
+     * Isso é o coração do polimorfismo, pois o mesmo método pode produzir
+     * resultados diferentes conforme o tipo do objeto.
+     */
+    public abstract double calcularValorFinal(double valorBase);
 
     public String exibirResumo() {
         // arredonda pra 2 casas
