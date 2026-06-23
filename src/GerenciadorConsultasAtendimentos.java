@@ -3,24 +3,21 @@ import java.util.List;
 
 public class GerenciadorConsultasAtendimentos {
 
-    // ArrayList para armazenar Consultas
+    // aqui ficam todas as consultas agendadas
+    // a ordem e conseguir acessar por índice quando precisar
     private List<Consulta> listaConsultas;
 
-    // ArrayList para armazenar Atendimentos
+    // mesma ideia pros atendimentos
     private List<Atendimento> listaAtendimentos;
 
-    // Construtor inicializando as estruturas de dados
     public GerenciadorConsultasAtendimentos() {
         this.listaConsultas = new ArrayList<>();
         this.listaAtendimentos = new ArrayList<>();
     }
 
-    /**
-     * Requisito Commit 2: Gerenciar Consultas e Atendimentos usando ArrayList
-     */
     public boolean agendarConsulta(Consulta consulta) {
         if (consulta == null) {
-            System.out.println("Erro: Consulta inválida.");
+            System.out.println("Erro: consulta inválida.");
             return false;
         }
         listaConsultas.add(consulta);
@@ -28,10 +25,9 @@ public class GerenciadorConsultasAtendimentos {
         return true;
     }
 
-    // Registrar Atendimento no sistema
     public boolean registrarAtendimento(Atendimento atendimento) {
         if (atendimento == null) {
-            System.out.println("Erro: Atendimento inválido.");
+            System.out.println("Erro: atendimento inválido.");
             return false;
         }
         listaAtendimentos.add(atendimento);
@@ -39,59 +35,80 @@ public class GerenciadorConsultasAtendimentos {
         return true;
     }
 
-    // Listar todas as Consultas armazenadas (ArrayList)
     public void listarTodasConsultas() {
         if (listaConsultas.isEmpty()) {
-            System.out.println("Nenhuma consulta agendada.");
+            System.out.println("Nenhuma consulta agendada ainda.");
             return;
         }
-        System.out.println("--- Lista de Consultas (ArrayList) ---");
+
+        System.out.println("--- Consultas ---");
         for (Consulta c : listaConsultas) {
-            System.out.println("Consulta: " + c.toString());
+            System.out.println(c.toString());
         }
     }
 
-    // Listar todos os Atendimentos armazenados (ArrayList)
     public void listarTodosAtendimentos() {
         if (listaAtendimentos.isEmpty()) {
-            System.out.println("Nenhum atendimento registrado.");
+            System.out.println("Nenhum atendimento registrado ainda.");
             return;
         }
-        System.out.println("--- Lista de Atendimentos (ArrayList) ---");
+
+        System.out.println("--- Atendimentos ---");
         for (Atendimento a : listaAtendimentos) {
-            System.out.println("Atendimento: " + a.toString());
+            System.out.println(a.toString());
         }
     }
 
-    // Remover Consulta do sistema
     public boolean removerConsulta(int indice) {
-        if (indice >= 0 && indice < listaConsultas.size()) {
-            listaConsultas.remove(indice);
-            System.out.println("Consulta removida com sucesso!");
-            return true;
+        if (indice < 0 || indice >= listaConsultas.size()) {
+            System.out.println("Índice inválido, nenhuma consulta removida.");
+            return false;
         }
-        System.out.println("Consulta não encontrada para remoção.");
-        return false;
+        listaConsultas.remove(indice);
+        System.out.println("Consulta removida.");
+        return true;
     }
 
-    // Remover Atendimento do sistema
     public boolean removerAtendimento(int indice) {
-        if (indice >= 0 && indice < listaAtendimentos.size()) {
-            listaAtendimentos.remove(indice);
-            System.out.println("Atendimento removido com sucesso!");
-            return true;
+        if (indice < 0 || indice >= listaAtendimentos.size()) {
+            System.out.println("Índice inválido, nenhum atendimento removido.");
+            return false;
         }
-        System.out.println("Atendimento não encontrado para remoção.");
-        return false;
+        listaAtendimentos.remove(indice);
+        System.out.println("Atendimento removido.");
+        return true;
     }
 
-    // Obter quantidade de Consultas
+    // busca consulta por índice, útil pra operações de cancelamento e remarcação
+    public Consulta buscarConsultaPorIndice(int indice) {
+        if (indice < 0 || indice >= listaConsultas.size()) {
+            System.out.println("Índice inválido.");
+            return null;
+        }
+        return listaConsultas.get(indice);
+    }
+
+    public Atendimento buscarAtendimentoPorIndice(int indice) {
+        if (indice < 0 || indice >= listaAtendimentos.size()) {
+            System.out.println("Índice inválido.");
+            return null;
+        }
+        return listaAtendimentos.get(indice);
+    }
+
     public int obterQuantidadeConsultas() {
         return listaConsultas.size();
     }
 
-    // Obter quantidade de Atendimentos
     public int obterQuantidadeAtendimentos() {
         return listaAtendimentos.size();
+    }
+
+    public List<Consulta> getListaConsultas() {
+        return listaConsultas;
+    }
+
+    public List<Atendimento> getListaAtendimentos() {
+        return listaAtendimentos;
     }
 }
