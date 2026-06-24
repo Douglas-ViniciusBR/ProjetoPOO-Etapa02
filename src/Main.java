@@ -875,6 +875,7 @@ public class Main {
         Pagamento pagamento;
 
         if (tipoPag.equals("cartao")) {
+
             System.out.print("Parcelas (1 a 3): ");
             int parc = Integer.parseInt(sc.nextLine());
             if (parc < 1) parc = 1;

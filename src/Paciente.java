@@ -14,8 +14,8 @@ public class Paciente extends Pessoa {
 
     public Paciente(String nome, String cpf, int idade, String telefone) {
         super(nome, cpf);
-        this.idade = idade;
-        this.telefone = telefone;
+        setIdade(idade);
+        setTelefone(telefone);
         this.convenioNome = "";
         this.ativo = true;
     }
@@ -23,23 +23,23 @@ public class Paciente extends Pessoa {
     // construtor com todos os dados
     public Paciente(String nome, String cpf, int idade, String telefone, String convenioNome) {
         super(nome, cpf);
-        this.idade = idade;
-        this.telefone = telefone;
-        this.convenioNome = convenioNome;
+        setIdade(idade);
+        setTelefone(telefone);
+        setConvenioNome(convenioNome);
         this.ativo = true;
     }
 
     // atualiza so idade e telefone
     public void complementar(int idade, String telefone) {
-        this.idade = idade;
-        this.telefone = telefone;
+        setIdade(idade);
+        setTelefone(telefone);
     }
 
     // atualiza tudo incluindo convenio
     public void complementar(int idade, String telefone, String convenioNome) {
-        this.idade = idade;
-        this.telefone = telefone;
-        this.convenioNome = convenioNome;
+        setIdade(idade);
+        setTelefone(telefone);
+        setConvenioNome(convenioNome);
     }
 
     public void desativar() {
@@ -48,6 +48,27 @@ public class Paciente extends Pessoa {
 
     public int getIdade() {
         return idade;
+    }
+
+    public void setIdade(int idade) {
+        if (idade < 0 || idade > 130) {
+            throw new IllegalArgumentException("Idade inválida: " + idade);
+        }
+        this.idade = idade;
+    }
+
+    public void setTelefone(String telefone) {
+        if (telefone == null) telefone = "";
+        String t = telefone.trim();
+        if (!t.isEmpty() && !t.matches("[0-9()+\\- ]+")) {
+            throw new IllegalArgumentException("Telefone inválido: " + telefone);
+        }
+        this.telefone = t;
+    }
+
+    public void setConvenioNome(String convenioNome) {
+        if (convenioNome == null) convenioNome = "";
+        this.convenioNome = convenioNome.trim();
     }
 
     public String getTelefone() {

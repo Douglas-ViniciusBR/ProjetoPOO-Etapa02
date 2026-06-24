@@ -11,7 +11,7 @@ public abstract class Profissional extends Pessoa {
     // Construtor mínimo com os dados compartilhados de Pessoa e Profissional
     public Profissional(String nome, String cpf, String especialidade) {
         super(nome, cpf);
-        this.especialidade = especialidade;
+        setEspecialidade(especialidade);
         this.registroProfissional = "";
         this.valorConsulta = 0;
         this.diasDisponiveis = new String[7];
@@ -20,9 +20,9 @@ public abstract class Profissional extends Pessoa {
 
     public Profissional(String nome, String cpf, String especialidade, String registroProfissional, double valorConsulta) {
         super(nome, cpf);
-        this.especialidade = especialidade;
-        this.registroProfissional = registroProfissional;
-        this.valorConsulta = valorConsulta;
+        setEspecialidade(especialidade);
+        setRegistroProfissional(registroProfissional);
+        setValorConsulta(valorConsulta);
         this.diasDisponiveis = new String[7];
         this.totalDias = 0;
     }
@@ -31,34 +31,30 @@ public abstract class Profissional extends Pessoa {
     public Profissional(String nome, String cpf, String especialidade, String registroProfissional,
                         double valorConsulta, String[] dias, int totalDias) {
         super(nome, cpf);
-        this.especialidade = especialidade;
-        this.registroProfissional = registroProfissional;
-        this.valorConsulta = valorConsulta;
+        setEspecialidade(especialidade);
+        setRegistroProfissional(registroProfissional);
+        setValorConsulta(valorConsulta);
         this.diasDisponiveis = new String[7];
-        this.totalDias = totalDias;
-        for (int i = 0; i < totalDias; i++) {
-            this.diasDisponiveis[i] = dias[i];
-        }
+        this.totalDias = 0;
+        setDias(dias, totalDias);
     }
 
     public void atualizar(String registro, double valor) {
-        this.registroProfissional = registro;
-        this.valorConsulta = valor;
+        setRegistroProfissional(registro);
+        setValorConsulta(valor);
     }
 
     public void atualizar(String registro, double valor, String[] dias, int totalDias) {
-        this.registroProfissional = registro;
-        this.valorConsulta = valor;
-        this.totalDias = totalDias;
-        for (int i = 0; i < totalDias; i++) {
-            this.diasDisponiveis[i] = dias[i];
-        }
+        setRegistroProfissional(registro);
+        setValorConsulta(valor);
+        setDias(dias, totalDias);
     }
 
     // verifica se o profissional atende naquele dia
     public boolean atendeNoDia(String dia) {
+        if (dia == null) return false;
         for (int i = 0; i < totalDias; i++) {
-            if (diasDisponiveis[i].equals(dia)) {
+            if (diasDisponiveis[i] != null && diasDisponiveis[i].equals(dia)) {
                 return true;
             }
         }
@@ -79,16 +75,49 @@ public abstract class Profissional extends Pessoa {
 
     // valida as especialidades aceitas pela clinica
     public static boolean especialidadeValida(String esp) {
-        if (esp.equals("clinica geral")) return true;
-        if (esp.equals("fisioterapia")) return true;
-        if (esp.equals("psicologia")) return true;
-        if (esp.equals("nutricao")) return true;
+        if (esp == null) return false;
+        String s = esp.toLowerCase().trim();
+        if (s.equals("clinica geral")) return true;
+        if (s.equals("fisioterapia")) return true;
+        if (s.equals("psicologia")) return true;
+        if (s.equals("nutricao")) return true;
         return false;
     }
 
     // A classe Profissional continua abstrata e força as subclasses a
     // implementarem o comportamento específico de exibição do resumo.
     public abstract void exibirResumo();
+
+    public void setEspecialidade(String esp) {
+        if (!especialidadeValida(esp)) throw new IllegalArgumentException("Especialidade inválida: " + esp);
+        this.especialidade = esp.toLowerCase().trim();
+    }
+
+    public void setValorConsulta(double valor) {
+        if (valor < 0) throw new IllegalArgumentException("Valor de consulta negativo: " + valor);
+        this.valorConsulta = valor;
+    }
+
+    public void setRegistroProfissional(String reg) {
+        if (reg == null) reg = "";
+        this.registroProfissional = reg.trim();
+    }
+
+    public void setDias(String[] dias, int totalDias) {
+        if (dias == null) {
+            this.totalDias = 0;
+            return;
+        }
+        if (totalDias < 0 || totalDias > dias.length || totalDias > 7) {
+            throw new IllegalArgumentException("Total de dias inválido: " + totalDias);
+        }
+        this.diasDisponiveis = new String[7];
+        this.totalDias = totalDias;
+        for (int i = 0; i < totalDias; i++) {
+            if (dias[i] == null) throw new IllegalArgumentException("Dia inválido em posição: " + i);
+            this.diasDisponiveis[i] = dias[i];
+        }
+    }
 
     /**
      * Retorna os dados principais do profissional (nome, cpf,
