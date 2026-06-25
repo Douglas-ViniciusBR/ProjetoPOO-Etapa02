@@ -24,9 +24,10 @@ public class Main {
     public static void main(String[] args) {
         int opcao = -1;
         while (opcao != 0) {
-            System.out.println("\n=== CLINICA VIDAPLENA ===");
-            System.out.println("1 - Pacientes");
-            System.out.println("2 - Profissionais");
+            try {
+                System.out.println("\n=== CLINICA VIDAPLENA ===");
+                System.out.println("1 - Pacientes");
+                System.out.println("2 - Profissionais");
             System.out.println("3 - Consultas");
             System.out.println("4 - Atendimentos");
             System.out.println("5 - Pagamentos");
@@ -45,6 +46,11 @@ public class Main {
                 case 0: break;
                 default: System.out.println("Opcao invalida!"); break;
             }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu principal
+            }
         }
         System.out.println("Sistema encerrado.");
     }
@@ -54,9 +60,10 @@ public class Main {
     public static void menuPacientes() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- PACIENTES ---");
-            System.out.println("1 - Cadastrar");
-            System.out.println("2 - Complementar cadastro");
+            try {
+                System.out.println("\n--- PACIENTES ---");
+                System.out.println("1 - Cadastrar");
+                System.out.println("2 - Complementar cadastro");
             System.out.println("3 - Buscar por CPF");
             System.out.println("4 - Listar todos");
             System.out.println("5 - Desativar");
@@ -72,6 +79,11 @@ public class Main {
                 case 5: desativarPaciente(); break;
                 case 0: break;
                 default: System.out.println("Opcao invalida!"); break;
+            }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de pacientes
             }
         }
     }
@@ -184,9 +196,10 @@ public class Main {
     public static void menuProfissionais() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- PROFISSIONAIS ---");
-            System.out.println("1 - Cadastrar");
-            System.out.println("2 - Atualizar cadastro");
+            try {
+                System.out.println("\n--- PROFISSIONAIS ---");
+                System.out.println("1 - Cadastrar");
+                System.out.println("2 - Atualizar cadastro");
             System.out.println("3 - Listar todos");
             System.out.println("4 - Filtrar por especialidade");
             System.out.println("0 - Voltar");
@@ -200,6 +213,11 @@ public class Main {
                 case 4: filtrarProfissionais(); break;
                 case 0: break;
                 default: System.out.println("Opcao invalida!"); break;
+            }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de profissionais
             }
         }
     }
@@ -339,9 +357,10 @@ public class Main {
     public static void menuConsultas() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- CONSULTAS ---");
-            System.out.println("1 - Agendar (escolher profissional)");
-            System.out.println("2 - Agendar (busca por especialidade)");
+            try {
+                System.out.println("\n--- CONSULTAS ---");
+                System.out.println("1 - Agendar (escolher profissional)");
+                System.out.println("2 - Agendar (busca por especialidade)");
             System.out.println("3 - Cancelar");
             System.out.println("4 - Remarcar");
             System.out.println("5 - Listar todas");
@@ -359,6 +378,11 @@ public class Main {
                 case 6: buscarConsultasPorPaciente(); break;
                 case 0: break;
                 default: System.out.println("Opcao invalida!"); break;
+            }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de consultas
             }
         }
     }
@@ -681,13 +705,19 @@ public class Main {
     public static void menuAtendimentos() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- ATENDIMENTOS ---");
-            System.out.println("1 - Registrar atendimento");
-            System.out.println("0 - Voltar");
-            System.out.print("Opcao: ");
-            op = Integer.parseInt(sc.nextLine());
+            try {
+                System.out.println("\n--- ATENDIMENTOS ---");
+                System.out.println("1 - Registrar atendimento");
+                System.out.println("0 - Voltar");
+                System.out.print("Opcao: ");
+                op = Integer.parseInt(sc.nextLine());
 
-            if (op == 1) registrarAtendimento();
+                if (op == 1) registrarAtendimento();
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de atendimentos
+            }
         }
     }
 
@@ -762,20 +792,26 @@ public class Main {
     public static void menuPagamentos() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- PAGAMENTOS ---");
-            System.out.println("1 - Pagamento direto");
-            System.out.println("2 - Pagamento automatico");
-            System.out.println("3 - Listar pagamentos");
-            System.out.println("0 - Voltar");
-            System.out.print("Opcao: ");
-            op = Integer.parseInt(sc.nextLine());
+            try {
+                System.out.println("\n--- PAGAMENTOS ---");
+                System.out.println("1 - Pagamento direto");
+                System.out.println("2 - Pagamento automatico");
+                System.out.println("3 - Listar pagamentos");
+                System.out.println("0 - Voltar");
+                System.out.print("Opcao: ");
+                op = Integer.parseInt(sc.nextLine());
 
-            switch (op) {
-                case 1: pagamentoDireto(); break;
-                case 2: pagamentoAutomatico(); break;
-                case 3: listarPagamentos(); break;
-                case 0: break;
-                default: System.out.println("Opcao invalida!"); break;
+                switch (op) {
+                    case 1: pagamentoDireto(); break;
+                    case 2: pagamentoAutomatico(); break;
+                    case 3: listarPagamentos(); break;
+                    case 0: break;
+                    default: System.out.println("Opcao invalida!"); break;
+                }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de pagamentos
             }
         }
     }
@@ -909,41 +945,75 @@ public class Main {
         }
     }
 
+    public static int lerInt(String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            String linha = sc.nextLine();
+            try {
+                return Integer.parseInt(linha);
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Digite um numero inteiro valido.");
+            } finally {
+                // Continua no laço até o usuario digitar corretamente.
+            }
+        }
+    }
+
+    public static double lerDouble(String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            String linha = sc.nextLine();
+            try {
+                return Double.parseDouble(linha);
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // Continua no laço ate o usuario digitar corretamente.
+            }
+        }
+    }
+
     // ---- RELATORIOS ----
 
     public static void menuRelatorios() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n--- RELATORIOS ---");
-            System.out.println("1 - Geral");
-            System.out.println("2 - Por profissional");
-            System.out.println("3 - Por periodo");
-            System.out.println("4 - Resumo financeiro");
-            System.out.println("0 - Voltar");
-            System.out.print("Opcao: ");
-            op = Integer.parseInt(sc.nextLine());
+            try {
+                System.out.println("\n--- RELATORIOS ---");
+                System.out.println("1 - Geral");
+                System.out.println("2 - Por profissional");
+                System.out.println("3 - Por periodo");
+                System.out.println("4 - Resumo financeiro");
+                System.out.println("0 - Voltar");
+                System.out.print("Opcao: ");
+                op = Integer.parseInt(sc.nextLine());
 
-            switch (op) {
-                case 1:
-                    Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos);
-                    break;
-                case 2:
-                    System.out.print("Nome do profissional: ");
-                    String nome = sc.nextLine();
-                    Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos, nome);
-                    break;
-                case 3:
-                    System.out.print("Data inicio (DD/MM/AAAA): ");
-                    String ini = sc.nextLine();
-                    System.out.print("Data fim (DD/MM/AAAA): ");
-                    String fim = sc.nextLine();
-                    Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos, ini, fim);
-                    break;
-                case 4:
-                    Relatorio.gerarResumoFinanceiro(consultas, totalConsultas, pagamentos, totalPagamentos, multas, totalMultas);
-                    break;
-                case 0: break;
-                default: System.out.println("Opcao invalida!"); break;
+                switch (op) {
+                    case 1:
+                        Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos);
+                        break;
+                    case 2:
+                        System.out.print("Nome do profissional: ");
+                        String nome = sc.nextLine();
+                        Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos, nome);
+                        break;
+                    case 3:
+                        System.out.print("Data inicio (DD/MM/AAAA): ");
+                        String ini = sc.nextLine();
+                        System.out.print("Data fim (DD/MM/AAAA): ");
+                        String fim = sc.nextLine();
+                        Relatorio.gerarRelatorio(consultas, totalConsultas, atendimentos, totalAtendimentos, ini, fim);
+                        break;
+                    case 4:
+                        Relatorio.gerarResumoFinanceiro(consultas, totalConsultas, pagamentos, totalPagamentos, multas, totalMultas);
+                        break;
+                    case 0: break;
+                    default: System.out.println("Opcao invalida!"); break;
+                }
+            } catch (RuntimeException e) {
+                System.out.println("Entrada invalida. Digite um numero valido.");
+            } finally {
+                // continua no menu de relatorios
             }
         }
     }
