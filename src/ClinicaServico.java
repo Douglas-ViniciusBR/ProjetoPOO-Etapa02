@@ -11,6 +11,9 @@ public class ClinicaServico {
     private List<Atendimento> atendimentos;
     private List<Pagamento> pagamentos;
     private List<Double> multas;
+    
+    // Coleção unificada para armazenar todas as pessoas (Pacientes e Profissionais)
+    private List<Pessoa> todasAsPessoas;
 
     public ClinicaServico() {
         this.pacientes = new ArrayList<>();
@@ -19,6 +22,7 @@ public class ClinicaServico {
         this.atendimentos = new ArrayList<>();
         this.pagamentos = new ArrayList<>();
         this.multas = new ArrayList<>();
+        this.todasAsPessoas = new ArrayList<>(); //[cite: 31]
     }
 
     // ========================================
@@ -36,6 +40,7 @@ public class ClinicaServico {
             return false;
         }
         pacientes.add(paciente);
+        todasAsPessoas.add(paciente); // Mantém a lista unificada sincronizada
         System.out.println("Paciente cadastrado com sucesso!");
         return true;
     }
@@ -80,6 +85,7 @@ public class ClinicaServico {
             return false;
         }
         profissionais.add(prof);
+        todasAsPessoas.add(prof); // Mantém a lista unificada sincronizada[cite: 31]
         System.out.println("Profissional cadastrado!");
         return true;
     }
@@ -160,9 +166,7 @@ public class ClinicaServico {
         }
     }
 
-    
-     // Verifica se existe conflito de horário para um profissional em uma data/horário.
-     
+    // Verifica se existe conflito de horário para um profissional em uma data/horário.
     public boolean temConflito(String nomeProfissional, String data, String horario) {
         for (Consulta c : consultas) {
             if (c.nomeProfissional.equals(nomeProfissional)
@@ -175,9 +179,7 @@ public class ClinicaServico {
         return false;
     }
 
-    
-     // Sugere o próximo horário disponível (de hora em hora, 08h até 18h)
-
+    // Sugere o próximo horário disponível (de hora em hora, 08h até 18h)
     public String sugerirHorario(String nomeProfissional, String data) {
         for (int h = 8; h <= 18; h++) {
             String teste = (h < 10 ? "0" + h : "" + h) + ":00";
@@ -188,9 +190,7 @@ public class ClinicaServico {
         return "";
     }
 
-    
-     // Descobre o dia da semana usando a fórmula de Zeller.
-     
+    // Descobre o dia da semana usando a fórmula de Zeller.
     public String descobrirDiaSemana(String data) {
         int dia = Integer.parseInt(data.substring(0, 2));
         int mes = Integer.parseInt(data.substring(3, 5));
@@ -274,7 +274,56 @@ public class ClinicaServico {
     }
 
     // ========================================
-    //               RELATÓRIOS
+    //         RELATÓRIOS ANALÍTICOS
+    // ========================================
+
+    // Exibe um relatório contando quantos profissionais existem no sistema usando o operador instanceof.
+    public void exibirContagemPorEspecialidade() {
+        int qtdFisioterapeutas = 0;
+        int qtdPsicologos = 0;
+        int qtdNutricionistas = 0;
+        int qtdClinicosGerais = 0;
+
+        for (Pessoa p : todasAsPessoas) {
+            if (p instanceof Profissional) {
+                if (p instanceof Fisioterapeuta) {
+                    qtdFisioterapeutas++;
+                } else if (p instanceof Psicologo) {
+                    qtdPsicologos++;
+                } else if (p instanceof Nutricionista) {
+                    qtdNutricionistas++;
+                } else if (p instanceof ClinicoGeral) {
+                    qtdClinicosGerais++;
+                }
+            }
+        }
+
+        System.out.println("\n=== QUANTIDADE DE PROFISSIONAIS POR ESPECIALIDADE (ANÁLISE INSTANCEOF) ===");
+        System.out.println("Fisioterapia:   " + qtdFisioterapeutas);
+        System.out.println("Psicologia:     " + qtdPsicologos);
+        System.out.println("Nutrição:       " + qtdNutricionistas);
+        System.out.println("Clínica Geral:  " + qtdClinicosGerais);
+    }
+
+    // Lista detalhadamente os profissionais de uma subclasse específica (via Reflection).
+    public void listarProfissionaisPorSubclasse(Class<? extends Profissional> tipoAlvo) {
+        System.out.println("\n=== LISTAGEM FILTRADA POR CLASSE REAL: " + tipoAlvo.getSimpleName() + " ===");
+        boolean encontrou = false;
+        
+        for (Pessoa p : todasAsPessoas) {
+            if (tipoAlvo.isInstance(p)) {
+                p.exibirResumo(); 
+                encontrou = true;
+            }
+        }
+        
+        if (!encontrou) {
+            System.out.println("Nenhum profissional do tipo " + tipoAlvo.getSimpleName() + " registrado no sistema.");
+        }
+    }
+
+    // ========================================
+    //            RELATÓRIOS GERAIS
     // ========================================
 
     public void gerarRelatorioGeral() {
@@ -379,31 +428,12 @@ public class ClinicaServico {
     // GETTERS (para acesso aos dados se necessário)
     // =============================================
 
-    public int getQuantidadePacientes() {
-        return pacientes.size();
-    }
-
-    public int getQuantidadeProfissionais() {
-        return profissionais.size();
-    }
-
-    public int getQuantidadeConsultas() {
-        return consultas.size();
-    }
-
-    public int getQuantidadeAtendimentos() {
-        return atendimentos.size();
-    }
-
-    public List<Consulta> getConsultas() {
-        return consultas;
-    }
-
-    public List<Paciente> getPacientes() {
-        return pacientes;
-    }
-
-    public List<Profissional> getProfissionais() {
-        return profissionais;
-    }
+    public int getQuantidadePacientes() { return pacientes.size(); }
+    public int getQuantidadeProfissionais() { return profissionais.size(); }
+    public int getQuantidadeConsultas() { return consultas.size(); }
+    public int getQuantidadeAtendimentos() { return atendimentos.size(); }
+    public List<Consulta> getConsultas() { return consultas; }
+    public List<Paciente> getPacientes() { return pacientes; }
+    public List<Profissional> getProfissionais() { return profissionais; }
+    public List<Pessoa> getTodasAsPessoas() { return todasAsPessoas; }
 }
