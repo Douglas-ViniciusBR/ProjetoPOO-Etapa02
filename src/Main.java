@@ -47,6 +47,7 @@ public class Main {
                 System.out.println("2 - Buscar por CPF");
                 System.out.println("3 - Listar todos");
                 System.out.println("4 - Desativar");
+                System.out.println("5 - Complementar cadastro");
                 System.out.println("0 - Voltar");
                 op = lerInt("Opcao: ");
 
@@ -79,6 +80,9 @@ public class Main {
                         System.out.print("CPF: ");
                         cpf = sc.nextLine();
                         servico.desativarPaciente(cpf);
+                        break;
+                    case 5:
+                        menuComplementarPaciente();
                         break;
                     case 0:
                         break;
@@ -498,6 +502,45 @@ public class Main {
             } catch (NumberFormatException e) {
                 System.out.println("Erro: Digite um numero valido.");
             }
+        }
+    }
+
+    public static void menuComplementarPaciente() {
+        System.out.println("\n--- COMPLEMENTAR PACIENTE ---");
+        System.out.print("CPF: ");
+        String cpf = sc.nextLine();
+        Paciente paciente = servico.buscarPacientePorCpf(cpf);
+        if (paciente == null) {
+            System.out.println("Paciente nao encontrado.");
+            return;
+        }
+        System.out.println("1 - Complementar apenas idade e telefone");
+        System.out.println("2 - Complementar idade, telefone e convenio");
+        int opcao = lerInt("Opcao: ");
+        if (opcao == 1) {
+            int idade = lerInt("Idade: ");
+            System.out.print("Telefone: ");
+            String tel = sc.nextLine();
+            try {
+                paciente.complementar(idade, tel);
+                System.out.println("Cadastro complementado com sucesso.");
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        } else if (opcao == 2) {
+            int idade = lerInt("Idade: ");
+            System.out.print("Telefone: ");
+            String tel = sc.nextLine();
+            System.out.print("Convenio: ");
+            String conv = sc.nextLine();
+            try {
+                paciente.complementar(idade, tel, conv);
+                System.out.println("Cadastro complementado com sucesso.");
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Opcao invalida.");
         }
     }
 }

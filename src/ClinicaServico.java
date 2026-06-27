@@ -1,11 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClinicaServico {
     //========================
     // ---- ARMAZENAMENTO ----
     //========================
     private List<Paciente> pacientes;
+    private Map<String, Paciente> pacientesPorCpf;
     private List<Profissional> profissionais;
     private List<Consulta> consultas;
     private List<Atendimento> atendimentos;
@@ -17,6 +20,7 @@ public class ClinicaServico {
 
     public ClinicaServico() {
         this.pacientes = new ArrayList<>();
+        this.pacientesPorCpf = new HashMap<>();
         this.profissionais = new ArrayList<>();
         this.consultas = new ArrayList<>();
         this.atendimentos = new ArrayList<>();
@@ -34,24 +38,28 @@ public class ClinicaServico {
             System.out.println("Erro: paciente inválido.");
             return false;
         }
-        // verifica duplicidade
-        if (buscarPacientePorCpf(paciente.getCpf()) != null) {
+        String cpf = paciente.getCpf();
+        if (cpf == null || cpf.isEmpty()) {
+            System.out.println("Erro: CPF inválido.");
+            return false;
+        }
+        if (pacientesPorCpf.containsKey(cpf)) {
             System.out.println("CPF ja cadastrado!");
             return false;
         }
         pacientes.add(paciente);
+        pacientesPorCpf.put(cpf, paciente);
         todasAsPessoas.add(paciente); // Mantém a lista unificada sincronizada
         System.out.println("Paciente cadastrado com sucesso!");
         return true;
     }
 
     public Paciente buscarPacientePorCpf(String cpf) {
-        for (Paciente p : pacientes) {
-            if (p.getCpf().equals(cpf)) {
-                return p;
-            }
+        cpf = normalizarCpf(cpf);
+        if (cpf == null || cpf.isEmpty()) {
+            return null;
         }
-        return null;
+        return pacientesPorCpf.get(cpf);
     }
 
     public void listarPacientes() {
@@ -73,6 +81,13 @@ public class ClinicaServico {
         p.desativar();
         System.out.println("Paciente desativado.");
         return true;
+    }
+
+    private String normalizarCpf(String cpf) {
+        if (cpf == null) {
+            return null;
+        }
+        return cpf.replaceAll("\\D", "");
     }
 
     // ========================================

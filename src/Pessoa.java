@@ -84,4 +84,17 @@ public abstract class Pessoa {
     public String toString() {
         return "Pessoa{nome='" + nome + "', cpf='" + cpf + "'}";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pessoa pessoa = (Pessoa) o;
+        return cpf != null ? cpf.equals(pessoa.cpf) : pessoa.cpf == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return cpf != null ? cpf.hashCode() : 0;
+    }
 }
