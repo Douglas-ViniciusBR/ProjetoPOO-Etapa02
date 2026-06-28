@@ -195,14 +195,30 @@ public class Main {
             return new ClinicoGeral(nome, cpf, registro, valor, dias, totalDias);
         }
         if (esp.equals("fisioterapia")) {
-            if (tipo == 1) return new Fisioterapeuta(nome, cpf);
-            if (tipo == 2) return new Fisioterapeuta(nome, cpf, registro, valor);
-            return new Fisioterapeuta(nome, cpf, registro, valor, dias, totalDias);
+            int sessoes = lerInt("Sessoes por tratamento: ");
+            Fisioterapeuta fisioterapeuta;
+            if (tipo == 1) {
+                fisioterapeuta = new Fisioterapeuta(nome, cpf);
+            } else if (tipo == 2) {
+                fisioterapeuta = new Fisioterapeuta(nome, cpf, registro, valor);
+            } else {
+                fisioterapeuta = new Fisioterapeuta(nome, cpf, registro, valor, dias, totalDias);
+            }
+            fisioterapeuta.setQuantidadeSessoesPorTratamento(sessoes);
+            return fisioterapeuta;
         }
         if (esp.equals("psicologia")) {
-            if (tipo == 1) return new Psicologo(nome, cpf);
-            if (tipo == 2) return new Psicologo(nome, cpf, registro, valor);
-            return new Psicologo(nome, cpf, registro, valor, dias, totalDias);
+            String abordagem = lerTexto("Abordagem terapeutica: ");
+            Psicologo psicologo;
+            if (tipo == 1) {
+                psicologo = new Psicologo(nome, cpf);
+            } else if (tipo == 2) {
+                psicologo = new Psicologo(nome, cpf, registro, valor);
+            } else {
+                psicologo = new Psicologo(nome, cpf, registro, valor, dias, totalDias);
+            }
+            psicologo.setAbordagemTerapeutica(abordagem);
+            return psicologo;
         }
         if (esp.equals("nutricao")) {
             if (tipo == 1) return new Nutricionista(nome, cpf);
@@ -252,6 +268,30 @@ public class Main {
             for (int i = 0; i < totalDias && i < dias.length; i++) {
                 System.out.print("Dia " + (i + 1) + ": ");
                 dias[i] = sc.nextLine();
+            }
+        }
+
+        if (prof instanceof Fisioterapeuta) {
+            System.out.print("Sessoes por tratamento (deixe vazio para manter): ");
+            String sessoesTexto = sc.nextLine();
+            if (!sessoesTexto.trim().isEmpty()) {
+                try {
+                    ((Fisioterapeuta) prof).setQuantidadeSessoesPorTratamento(Integer.parseInt(sessoesTexto));
+                } catch (NumberFormatException e) {
+                    System.out.println("Valor de sessoes invalido. Mantendo valor atual.");
+                }
+            }
+        }
+
+        if (prof instanceof Psicologo) {
+            System.out.print("Abordagem terapeutica (deixe vazio para manter): ");
+            String abordagem = sc.nextLine();
+            if (!abordagem.trim().isEmpty()) {
+                try {
+                    ((Psicologo) prof).setAbordagemTerapeutica(abordagem);
+                } catch (Exception e) {
+                    System.out.println("Erro: " + e.getMessage());
+                }
             }
         }
 
@@ -355,7 +395,12 @@ public class Main {
 
                         String tipoConsulta = prof.getEspecialidade();
                         Consulta consulta = new Consulta(cpf, nomeProf, data, horario, tipoConsulta);
-                        servico.agendarConsulta(consulta);
+                        try {
+                            servico.agendarConsulta(consulta);
+                            System.out.println("Consulta agendada com sucesso.");
+                        } catch (AgendamentoException e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
                         break;
                     case 2:
                         servico.listarConsultas();

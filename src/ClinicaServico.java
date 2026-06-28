@@ -182,9 +182,31 @@ public class ClinicaServico {
 
     public boolean agendarConsulta(Consulta consulta) {
         if (consulta == null) {
-            System.out.println("Erro: consulta inválida.");
-            return false;
+            throw new AgendamentoException("Consulta inválida.");
         }
+
+        Paciente paciente = buscarPacientePorCpf(consulta.cpfPaciente);
+        if (paciente == null) {
+            throw new AgendamentoException("Paciente não encontrado.");
+        }
+        if (!paciente.isAtivo()) {
+            throw new AgendamentoException("Paciente inativo. Não é possível agendar.");
+        }
+
+        Profissional profissional = buscarProfissionalPorNome(consulta.nomeProfissional);
+        if (profissional == null) {
+            throw new AgendamentoException("Profissional não encontrado.");
+        }
+
+        if (temConflito(consulta.nomeProfissional, consulta.data, consulta.horario)) {
+            String sugestao = sugerirHorario(consulta.nomeProfissional, consulta.data);
+            String mensagem = "Horário indisponível para o profissional.";
+            if (!sugestao.isEmpty()) {
+                mensagem += " Sugestão: " + sugestao;
+            }
+            throw new AgendamentoException(mensagem);
+        }
+
         consultas.add(consulta);
         System.out.println("Consulta agendada com sucesso!");
         return true;

@@ -1,34 +1,43 @@
 public class Psicologo extends Profissional {
-    // Subclasse concreta representa o profissional de psicologia.
-    // O método exibirResumo() demonstra polimorfismo: cada classe especializada
-    // exibe seu próprio resumo de forma diferente.
+    private String abordagemTerapeutica;
 
     public Psicologo(String nome, String cpf) {
         super(nome, cpf, "psicologia");
+        this.abordagemTerapeutica = "Nao informada";
     }
 
     public Psicologo(String nome, String cpf, String registroProfissional, double valorConsulta) {
         super(nome, cpf, "psicologia", registroProfissional, valorConsulta);
+        this.abordagemTerapeutica = "Nao informada";
     }
 
     public Psicologo(String nome, String cpf, String registroProfissional, double valorConsulta,
                      String[] dias, int totalDias) {
         super(nome, cpf, "psicologia", registroProfissional, valorConsulta, dias, totalDias);
+        this.abordagemTerapeutica = "Nao informada";
+    }
+
+    public String getAbordagemTerapeutica() {
+        return abordagemTerapeutica;
+    }
+
+    public void setAbordagemTerapeutica(String abordagemTerapeutica) {
+        if (abordagemTerapeutica == null || abordagemTerapeutica.trim().isEmpty()) {
+            throw new DadosInvalidosException("Abordagem terapêutica inválida");
+        }
+        this.abordagemTerapeutica = abordagemTerapeutica.trim();
     }
 
     @Override
     public void exibirResumo() {
         System.out.println("Nome: " + getNome()
                 + " | Conselho: " + getRegistroProfissional()
-                + " | Especialidade: " + getEspecialidade());
+                + " | Especialidade: " + getEspecialidade()
+                + " | Abordagem: " + abordagemTerapeutica);
     }
 
-    /**
-     * Usa a representação de `Profissional` para manter consistência entre especialidades.
-     * Serve para exibir rapidamente os dados do profissional.
-     */
     @Override
     public String toString() {
-        return "Psicologo{" + super.toString() + "}";
+        return "Psicologo{" + super.toString() + ", abordagemTerapeutica='" + abordagemTerapeutica + "'}";
     }
 }
