@@ -504,24 +504,24 @@ public class Main {
 
                         double valor = lerDouble("Valor: ");
                         System.out.print("Tipo (dinheiro/cartao/convenio): ");
-                        String tipoPag = sc.nextLine();
+                        String tipoPag = sc.nextLine().trim().toLowerCase();
 
                         Pagamento pagamento;
-                        if (tipoPag.equals("cartao")) {
+                        if ("cartao".equals(tipoPag)) {
                             int parc = lerInt("Parcelas (1 a 3): ");
-                            if (parc < 1) parc = 1;
-                            if (parc > 3) parc = 3;
+                            if (parc < 1 || parc > 3) {
+                                System.out.println("Parcelas inválidas. Informe entre 1 e 3.");
+                                break;
+                            }
                             pagamento = new PagamentoCartao(idxConsulta, valor, tipoPag, parc);
-                            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
-                            double vlrParc = Math.round((pagamento.valorFinal / parc) * 100.0) / 100.0;
-                            System.out.println("Pagamento em " + parc + "x de R$" + vlrParc);
-                        } else if (tipoPag.equals("convenio")) {
+                        } else if ("convenio".equals(tipoPag)) {
                             double cobertura = lerDouble("Percentual de cobertura do convenio (%): ");
                             pagamento = new PagamentoConvenio(idxConsulta, valor, tipoPag, cobertura);
-                            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
-                        } else {
+                        } else if ("dinheiro".equals(tipoPag)) {
                             pagamento = new PagamentoDinheiro(idxConsulta, valor, tipoPag);
-                            pagamento.valorFinal = pagamento.calcularValorFinal(valor);
+                        } else {
+                            System.out.println("Tipo de pagamento inválido. Use dinheiro, cartao ou convenio.");
+                            break;
                         }
 
                         servico.registrarPagamento(pagamento);

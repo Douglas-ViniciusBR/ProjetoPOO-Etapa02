@@ -12,6 +12,10 @@ public class PagamentoConvenio extends Pagamento {
         this.percentualCobertura = percentualCobertura;
     }
 
+    public double getPercentualCobertura() {
+        return percentualCobertura;
+    }
+
     @Override
     public double calcularValorFinal(double valorBase) {
         // Garante que o percentual não saia do intervalo válido.

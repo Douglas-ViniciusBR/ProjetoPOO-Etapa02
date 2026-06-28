@@ -423,9 +423,120 @@ public class ClinicaServico {
             System.out.println("Erro: pagamento inválido.");
             return false;
         }
+        if (pagamento.tipoPagamento == null || pagamento.tipoPagamento.trim().isEmpty()) {
+            System.out.println("Erro: tipo de pagamento inválido.");
+            return false;
+        }
+
+        Consulta consulta = buscarConsultaPorIndice(pagamento.indiceConsulta);
+        if (consulta == null) {
+            System.out.println("Indice de consulta inválido.");
+            return false;
+        }
+        if (!"realizada".equals(consulta.status)) {
+            System.out.println("Pagamento permitido apenas para consultas realizadas.");
+            return false;
+        }
+        if (!consultaTemAtendimento(pagamento.indiceConsulta)) {
+            System.out.println("Nenhum atendimento registrado para esta consulta.");
+            return false;
+        }
+
+        Paciente paciente = buscarPacientePorCpf(consulta.cpfPaciente);
+        if (paciente == null) {
+            System.out.println("Paciente não encontrado.");
+            return false;
+        }
+        if (!paciente.isAtivo()) {
+            System.out.println("Paciente inativo. Pagamento não permitido.");
+            return false;
+        }
+        if (pagamentoJaRegistradoParaConsulta(pagamento.indiceConsulta)) {
+            System.out.println("Já existe um pagamento registrado para esta consulta.");
+            return false;
+        }
+
+        String tipo = pagamento.tipoPagamento.trim().toLowerCase();
+        if ("cartao".equals(tipo)) {
+            if (pagamento.parcelas < 1 || pagamento.parcelas > 3) {
+                System.out.println("Parcelas inválidas. Informe entre 1 e 3.");
+                return false;
+            }
+        } else if ("convenio".equals(tipo)) {
+            String convenioNome = paciente.getConvenioNome();
+            if (convenioNome == null || convenioNome.trim().isEmpty()) {
+                System.out.println("Paciente não possui convênio cadastrado.");
+                return false;
+            }
+            if (!convenioCobreEspecialidade(convenioNome, consulta.tipo)) {
+                System.out.println("Convênio não cobre a especialidade da consulta.");
+                return false;
+            }
+            if (!(pagamento instanceof PagamentoConvenio)) {
+                System.out.println("Erro interno: tipo de pagamento convênio inválido.");
+                return false;
+            }
+            PagamentoConvenio convenio = (PagamentoConvenio) pagamento;
+            if (convenio.getPercentualCobertura() < 0 || convenio.getPercentualCobertura() > 100) {
+                System.out.println("Percentual de cobertura inválido.");
+                return false;
+            }
+        } else if (!"dinheiro".equals(tipo)) {
+            System.out.println("Tipo de pagamento inválido.");
+            return false;
+        }
+
+        double baseValor = pagamento.valorFinal;
+        pagamento.valorFinal = pagamento.calcularValorFinal(baseValor);
         pagamentos.add(pagamento);
         System.out.println("Pagamento registrado!");
         return true;
+    }
+
+    private boolean pagamentoJaRegistradoParaConsulta(int indiceConsulta) {
+        for (Pagamento p : pagamentos) {
+            if (p.indiceConsulta == indiceConsulta) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean consultaTemAtendimento(int indiceConsulta) {
+        for (Atendimento a : atendimentos) {
+            if (a.indiceConsulta == indiceConsulta) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean convenioCobreEspecialidade(String convenioNome, String especialidade) {
+        if (convenioNome == null || convenioNome.trim().isEmpty() || especialidade == null || especialidade.trim().isEmpty()) {
+            return false;
+        }
+        String convenio = convenioNome.trim().toLowerCase();
+        String esp = especialidade.trim().toLowerCase();
+
+        if (convenio.contains("unimed") || convenio.contains("saude") || convenio.contains("universal") || convenio.contains("bradesco")) {
+            return true;
+        }
+        if (convenio.contains("amil")) {
+            return esp.equals("clinica geral") || esp.equals("fisioterapia") || esp.equals("psicologia");
+        }
+        if (convenio.contains("psico")) {
+            return esp.equals("psicologia");
+        }
+        if (convenio.contains("fisio")) {
+            return esp.equals("fisioterapia");
+        }
+        if (convenio.contains("nutri")) {
+            return esp.equals("nutricao") || esp.equals("nutricionista");
+        }
+        if (convenio.contains("clinica")) {
+            return esp.equals("clinica geral");
+        }
+        return false;
     }
 
     public void listarPagamentos() {
