@@ -278,6 +278,8 @@ public class Main {
                 System.out.println("1 - Agendar com profissional");
                 System.out.println("2 - Listar todas");
                 System.out.println("3 - Buscar por CPF");
+                System.out.println("4 - Cancelar consulta");
+                System.out.println("5 - Remarcar consulta");
                 System.out.println("0 - Voltar");
                 op = lerInt("Opcao: ");
 
@@ -366,6 +368,36 @@ public class Main {
                         System.out.print("CPF: ");
                         cpf = sc.nextLine();
                         servico.listarConsultasPorCpf(cpf);
+                        break;
+                    case 4:
+                        servico.listarConsultas();
+                        int idxCancelar = lerInt("Indice da consulta para cancelar: ");
+                        Consulta consultaCancelar = servico.buscarConsultaPorIndice(idxCancelar);
+                        if (consultaCancelar == null) {
+                            System.out.println("Indice invalido.");
+                            break;
+                        }
+                        System.out.print("Motivo do cancelamento: ");
+                        String motivo = sc.nextLine();
+                        if (servico.cancelarConsulta(idxCancelar, motivo)) {
+                            System.out.println("Consulta cancelada com sucesso.");
+                        }
+                        break;
+                    case 5:
+                        servico.listarConsultas();
+                        int idxRemarcar = lerInt("Indice da consulta para remarcar: ");
+                        Consulta consultaRemarcar = servico.buscarConsultaPorIndice(idxRemarcar);
+                        if (consultaRemarcar == null) {
+                            System.out.println("Indice invalido.");
+                            break;
+                        }
+                        System.out.print("Nova data (DD/MM/AAAA): ");
+                        String novaData = sc.nextLine();
+                        System.out.print("Novo horario (HH:MM): ");
+                        String novoHorario = sc.nextLine();
+                        if (servico.remarcarConsulta(idxRemarcar, novaData, novoHorario)) {
+                            System.out.println("Consulta remarcada com sucesso.");
+                        }
                         break;
                     case 0:
                         break;

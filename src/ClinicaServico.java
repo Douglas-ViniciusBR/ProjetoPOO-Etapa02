@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -165,9 +168,13 @@ public class ClinicaServico {
     }
 
     public void filtrarProfissionaisPorEspecialidade(String especialidade) {
+        if (especialidade == null || especialidade.trim().isEmpty()) {
+            System.out.println("Especialidade invalida.");
+            return;
+        }
         boolean achou = false;
         for (Profissional p : profissionais) {
-            if (p.getEspecialidade().equals(especialidade)) {
+            if (p.getEspecialidade().equalsIgnoreCase(especialidade.trim())) {
                 p.exibirResumo();
                 achou = true;
             }
@@ -188,6 +195,69 @@ public class ClinicaServico {
         }
         consultas.add(consulta);
         System.out.println("Consulta agendada com sucesso!");
+        return true;
+    }
+
+    public boolean cancelarConsulta(int indice, String motivo) {
+        Consulta consulta = buscarConsultaPorIndice(indice);
+        if (consulta == null) {
+            System.out.println("Indice invalido.");
+            return false;
+        }
+        if ("realizada".equals(consulta.status)) {
+            System.out.println("Nao e possivel cancelar uma consulta ja realizada.");
+            return false;
+        }
+
+        double valorConsulta = obterValorConsultaPorProfissional(consulta.nomeProfissional);
+        double multa = calcularMultaCancelamento(consulta.data, valorConsulta);
+        if (multa > 0) {
+            registrarMulta(multa);
+            System.out.println("Multa aplicada: R$" + Math.round(multa * 100.0) / 100.0);
+        }
+
+        consulta.cancelar();
+        if (motivo != null && !motivo.trim().isEmpty()) {
+            System.out.println("Consulta cancelada. Motivo: " + motivo);
+        }
+        return true;
+    }
+
+    public boolean remarcarConsulta(int indice, String novaData, String novoHorario) {
+        Consulta consulta = buscarConsultaPorIndice(indice);
+        if (consulta == null) {
+            System.out.println("Indice invalido.");
+            return false;
+        }
+        if ("realizada".equals(consulta.status)) {
+            System.out.println("Nao e possivel remarcar uma consulta ja realizada.");
+            return false;
+        }
+
+        Profissional prof = buscarProfissionalPorNome(consulta.nomeProfissional);
+        if (prof == null) {
+            System.out.println("Profissional associado a consulta nao encontrado.");
+            return false;
+        }
+
+        String diaSemana = descobrirDiaSemana(novaData);
+        if (!prof.atendeNoDia(diaSemana)) {
+            System.out.println("Profissional nao atende nesse dia. Dias: " + prof.getDiasDisponiveisFormatados());
+            return false;
+        }
+
+        if (temConflito(consulta.nomeProfissional, novaData, novoHorario, indice)) {
+            System.out.println("Horario ocupado para esse profissional nessa data.");
+            return false;
+        }
+
+        double multa = calcularMultaRemarcacao(consulta.data, prof.getValorConsulta());
+        if (multa > 0) {
+            registrarMulta(multa);
+            System.out.println("Multa de remarcacao aplicada: R$" + Math.round(multa * 100.0) / 100.0);
+        }
+
+        consulta.remarcar(novaData, novoHorario);
         return true;
     }
 
@@ -223,7 +293,15 @@ public class ClinicaServico {
 
     // Verifica se existe conflito de horário para um profissional em uma data/horário.
     public boolean temConflito(String nomeProfissional, String data, String horario) {
-        for (Consulta c : consultas) {
+        return temConflito(nomeProfissional, data, horario, -1);
+    }
+
+    public boolean temConflito(String nomeProfissional, String data, String horario, int ignorarIndice) {
+        for (int i = 0; i < consultas.size(); i++) {
+            if (i == ignorarIndice) {
+                continue;
+            }
+            Consulta c = consultas.get(i);
             if (c.nomeProfissional.equals(nomeProfissional)
                     && c.data.equals(data)
                     && c.horario.equals(horario)
@@ -263,6 +341,46 @@ public class ClinicaServico {
 
         String[] nomes = {"sabado", "domingo", "segunda", "terca", "quarta", "quinta", "sexta"};
         return nomes[resultado];
+    }
+
+    private double obterValorConsultaPorProfissional(String nomeProfissional) {
+        Profissional prof = buscarProfissionalPorNome(nomeProfissional);
+        if (prof == null) {
+            return 0;
+        }
+        return prof.getValorConsulta();
+    }
+
+    private long diasAteConsulta(String dataConsulta) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate hoje = LocalDate.now();
+        LocalDate data = LocalDate.parse(dataConsulta, formatter);
+        return ChronoUnit.DAYS.between(hoje, data);
+    }
+
+    private double calcularMultaCancelamento(String dataConsulta, double valorConsulta) {
+        long dias = diasAteConsulta(dataConsulta);
+        if (dias < 0) {
+            return 0;
+        }
+        if (dias <= 1) {
+            return valorConsulta * 1.0; // multa total para cancelamento em tempo muito curto
+        }
+        if (dias <= 3) {
+            return valorConsulta * 0.5; // multa parcial para cancelamento de curto prazo
+        }
+        return 0;
+    }
+
+    private double calcularMultaRemarcacao(String dataConsulta, double valorConsulta) {
+        long dias = diasAteConsulta(dataConsulta);
+        if (dias < 0) {
+            return 0;
+        }
+        if (dias <= 3) {
+            return valorConsulta * 0.3; // remarcação de curto prazo gera penalidade
+        }
+        return 0;
     }
 
     // ========================================
