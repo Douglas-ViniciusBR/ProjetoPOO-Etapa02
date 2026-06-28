@@ -53,10 +53,8 @@ public class Main {
 
                 switch (op) {
                     case 1: 
-                        System.out.print("Nome: ");
-                        String nome = sc.nextLine();
-                        System.out.print("CPF: ");
-                        String cpf = sc.nextLine();
+                        String nome = lerTexto("Nome: ");
+                        String cpf = lerTexto("CPF: ");
                         System.out.print("Tipo (1-Minimo / 2-Com idade e tel / 3-Completo): ");
                         int tipo = lerInt("");
                         
@@ -130,10 +128,8 @@ public class Main {
 
                 switch (op) {
                     case 1:
-                        System.out.print("Nome: ");
-                        String nome = sc.nextLine();
-                        System.out.print("CPF: ");
-                        String cpf = sc.nextLine();
+                        String nome = lerTexto("Nome: ");
+                        String cpf = lerTexto("CPF: ");
                         System.out.print("Especialidade (clinica geral/fisioterapia/psicologia/nutricao): ");
                         String esp = sc.nextLine();
 
@@ -554,7 +550,8 @@ public class Main {
                 System.out.println("4 - Resumo financeiro");
                 System.out.println("5 - Relatorio de cancelamentos");
                 System.out.println("6 - Relatorio de multas");
-                System.out.println("7 - Exportar dados");
+                System.out.println("7 - Relatorio unificado de cadastros");
+                System.out.println("8 - Exportar dados");
                 System.out.println("0 - Voltar");
                 op = lerInt("Opcao: ");
 
@@ -584,6 +581,9 @@ public class Main {
                         servico.gerarRelatorioMultas();
                         break;
                     case 7:
+                        servico.gerarRelatorioUnificadoCadastros();
+                        break;
+                    case 8:
                         menuExportacao();
                         break;
                     case 0:
@@ -644,6 +644,19 @@ public class Main {
     }
 
     // ========== METODOS AUXILIARES ==========
+
+    public static String lerTexto(String mensagem) {
+        while (true) {
+            if (!mensagem.isEmpty()) {
+                System.out.print(mensagem);
+            }
+            String valor = sc.nextLine().trim();
+            if (!valor.isEmpty()) {
+                return valor;
+            }
+            System.out.println("Erro: valor invalido. Informe um texto.");
+        }
+    }
 
     public static int lerInt(String mensagem) {
         while (true) {

@@ -17,10 +17,10 @@ public abstract class Pessoa {
 
     public void setNome(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome não pode ser vazio");
+            throw new DadosInvalidosException("Nome não pode ser vazio");
         }
         if (nome.trim().length() < 2) {
-            throw new IllegalArgumentException("Nome muito curto");
+            throw new DadosInvalidosException("Nome muito curto");
         }
         this.nome = nome.trim();
     }
@@ -30,10 +30,10 @@ public abstract class Pessoa {
     }
 
     public void setCpf(String cpf) {
-        if (cpf == null) throw new IllegalArgumentException("CPF nulo");
+        if (cpf == null) throw new DadosInvalidosException("CPF nulo");
         String onlyDigits = cpf.replaceAll("\\D", "");
         if (!validarCpf(onlyDigits)) {
-            throw new IllegalArgumentException("CPF inválido: " + cpf);
+            throw new DadosInvalidosException("CPF inválido: " + cpf);
         }
         this.cpf = onlyDigits;
     }

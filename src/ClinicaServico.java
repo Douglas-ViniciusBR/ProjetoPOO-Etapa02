@@ -568,7 +568,7 @@ public class ClinicaServico {
             }
         }
 
-        System.out.println("\n=== QUANTIDADE DE PROFISSIONAIS POR ESPECIALIDADE (ANÁLISE INSTANCEOF) ===");
+        System.out.println("\n=== QUANTIDADE DE PROFISSIONAIS POR ESPECIALIDADE (ANALISE INSTANCEOF) ===");
         System.out.println("Fisioterapia:   " + qtdFisioterapeutas);
         System.out.println("Psicologia:     " + qtdPsicologos);
         System.out.println("Nutrição:       " + qtdNutricionistas);
@@ -590,7 +590,40 @@ public class ClinicaServico {
         }
     }
 
-    // RELATÓRIOS GERAIS
+    // RELATORIOS GERAIS
+
+    public void gerarRelatorioUnificadoCadastros() {
+        System.out.println("\n=== RELATORIO UNIFICADO DE CADASTROS ===");
+        int qtdPacientes = 0;
+        int qtdProfissionais = 0;
+
+        for (Pessoa pessoa : todasAsPessoas) {
+            if (pessoa instanceof Paciente) {
+                qtdPacientes++;
+                System.out.println("[Paciente]");
+            } else if (pessoa instanceof Profissional) {
+                qtdProfissionais++;
+                System.out.println("[Profissional]");
+            } else {
+                System.out.println("[Pessoa]");
+            }
+
+            pessoa.exibirResumo();
+
+            if (pessoa instanceof Paciente) {
+                Paciente paciente = (Paciente) pessoa;
+                System.out.println("  Status: " + (paciente.isAtivo() ? "ativo" : "inativo"));
+            } else if (pessoa instanceof Profissional) {
+                Profissional profissional = (Profissional) pessoa;
+                System.out.println("  Especialidade: " + profissional.getEspecialidade());
+                System.out.println("  Valor da consulta: " + profissional.getValorConsulta());
+            }
+
+            System.out.println("---");
+        }
+
+        System.out.println("Totais: Pacientes = " + qtdPacientes + " | Profissionais = " + qtdProfissionais);
+    }
 
     public void gerarRelatorioGeral() {
         System.out.println("\n=== RELATORIO GERAL ===");

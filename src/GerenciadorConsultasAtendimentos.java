@@ -61,7 +61,7 @@ public class GerenciadorConsultasAtendimentos {
 
     public boolean removerConsulta(int indice) {
         if (indice < 0 || indice >= listaConsultas.size()) {
-            System.out.println("Índice inválido, nenhuma consulta removida.");
+            System.out.println("Indice invalido, nenhuma consulta removida.");
             return false;
         }
         listaConsultas.remove(indice);
@@ -71,7 +71,7 @@ public class GerenciadorConsultasAtendimentos {
 
     public boolean removerAtendimento(int indice) {
         if (indice < 0 || indice >= listaAtendimentos.size()) {
-            System.out.println("Índice inválido, nenhum atendimento removido.");
+            System.out.println("Indice invalido, nenhum atendimento removido.");
             return false;
         }
         listaAtendimentos.remove(indice);
