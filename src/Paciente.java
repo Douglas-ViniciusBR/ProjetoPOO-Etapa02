@@ -1,4 +1,4 @@
-public class Paciente extends Pessoa {
+public class Paciente extends Pessoa implements Exportavel {
     private int idade;
     private String telefone;
     private String convenioNome;
@@ -52,7 +52,7 @@ public class Paciente extends Pessoa {
 
     public void setIdade(int idade) {
         if (idade < 0 || idade > 130) {
-            throw new IllegalArgumentException("Idade inválida: " + idade);
+            throw new DadosInvalidosException("Idade inválida: " + idade);
         }
         this.idade = idade;
     }
@@ -61,7 +61,7 @@ public class Paciente extends Pessoa {
         if (telefone == null) telefone = "";
         String t = telefone.trim();
         if (!t.isEmpty() && !t.matches("[0-9()+\\- ]+")) {
-            throw new IllegalArgumentException("Telefone inválido: " + telefone);
+            throw new DadosInvalidosException("Telefone inválido: " + telefone);
         }
         this.telefone = t;
     }
@@ -89,6 +89,11 @@ public class Paciente extends Pessoa {
         System.out.println("Nome: " + getNome() + " | CPF: " + getCpf() + " | Idade: " + idade
                 + " | Tel: " + telefone + " | Convenio: " + convenioNome
                 + " | Ativo: " + status);
+    }
+
+    @Override
+    public String exportarParaTexto() {
+        return toString();
     }
 
     /**

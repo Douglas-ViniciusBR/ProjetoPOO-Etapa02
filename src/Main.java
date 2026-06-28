@@ -552,6 +552,9 @@ public class Main {
                 System.out.println("2 - Relatorio por profissional");
                 System.out.println("3 - Relatorio por periodo");
                 System.out.println("4 - Resumo financeiro");
+                System.out.println("5 - Relatorio de cancelamentos");
+                System.out.println("6 - Relatorio de multas");
+                System.out.println("7 - Exportar dados");
                 System.out.println("0 - Voltar");
                 op = lerInt("Opcao: ");
 
@@ -573,6 +576,60 @@ public class Main {
                         break;
                     case 4:
                         servico.gerarResumoFinanceiro();
+                        break;
+                    case 5:
+                        servico.gerarRelatorioCancelamentos();
+                        break;
+                    case 6:
+                        servico.gerarRelatorioMultas();
+                        break;
+                    case 7:
+                        menuExportacao();
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Opcao invalida!");
+                        break;
+                }
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void menuExportacao() {
+        int op = -1;
+        while (op != 0) {
+            try {
+                System.out.println("\n--- EXPORTAR DADOS ---");
+                System.out.println("1 - Consultas");
+                System.out.println("2 - Atendimentos");
+                System.out.println("3 - Pagamentos");
+                System.out.println("4 - Pacientes");
+                System.out.println("5 - Profissionais");
+                System.out.println("6 - Todas as pessoas");
+                System.out.println("0 - Voltar");
+                op = lerInt("Opcao: ");
+
+                switch (op) {
+                    case 1:
+                        servico.exportarConsultas();
+                        break;
+                    case 2:
+                        servico.exportarAtendimentos();
+                        break;
+                    case 3:
+                        servico.exportarPagamentos();
+                        break;
+                    case 4:
+                        servico.exportarPacientes();
+                        break;
+                    case 5:
+                        servico.exportarProfissionais();
+                        break;
+                    case 6:
+                        servico.exportarTodasAsPessoas();
                         break;
                     case 0:
                         break;

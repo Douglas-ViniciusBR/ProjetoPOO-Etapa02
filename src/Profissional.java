@@ -1,7 +1,7 @@
 // Classe abstrata intermediária representa o conceito geral de um profissional na clínica.
 // A herança de Pessoa para Profissional permite compartilhar os atributos comuns de pessoa,
 // enquanto as subclasses concretas fornecem o comportamento específico de cada especialidade.
-public abstract class Profissional extends Pessoa {
+public abstract class Profissional extends Pessoa implements Exportavel {
     private String especialidade;
     private String registroProfissional;
     private double valorConsulta;
@@ -107,15 +107,19 @@ public abstract class Profissional extends Pessoa {
 
     // A classe Profissional continua abstrata e força as subclasses a
     // implementarem o comportamento específico de exibição do resumo.
+    public String exportarParaTexto() {
+        return toString();
+    }
+
     public abstract void exibirResumo();
 
     public void setEspecialidade(String esp) {
-        if (!especialidadeValida(esp)) throw new IllegalArgumentException("Especialidade inválida: " + esp);
+        if (!especialidadeValida(esp)) throw new DadosInvalidosException("Especialidade inválida: " + esp);
         this.especialidade = esp.toLowerCase().trim();
     }
 
     public void setValorConsulta(double valor) {
-        if (valor < 0) throw new IllegalArgumentException("Valor de consulta negativo: " + valor);
+        if (valor < 0) throw new DadosInvalidosException("Valor de consulta negativo: " + valor);
         this.valorConsulta = valor;
     }
 
@@ -131,13 +135,13 @@ public abstract class Profissional extends Pessoa {
             return;
         }
         if (totalDias < 0 || totalDias > dias.length || totalDias > 7) {
-            throw new IllegalArgumentException("Total de dias inválido: " + totalDias);
+            throw new DadosInvalidosException("Total de dias inválido: " + totalDias);
         }
         this.diasDisponiveis = new String[7];
         this.totalDias = totalDias;
         for (int i = 0; i < totalDias; i++) {
             if (dias[i] == null || dias[i].trim().isEmpty()) {
-                throw new IllegalArgumentException("Dia inválido em posição: " + i);
+                throw new DadosInvalidosException("Dia inválido em posição: " + i);
             }
             this.diasDisponiveis[i] = dias[i].trim().toLowerCase();
         }

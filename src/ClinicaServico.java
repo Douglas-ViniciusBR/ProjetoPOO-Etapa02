@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ClinicaServico {
-    //========================
-    // ---- ARMAZENAMENTO ----
-    //========================
+    // Armazenamento
     private List<Paciente> pacientes;
     private Map<String, Paciente> pacientesPorCpf;
     private List<Profissional> profissionais;
@@ -18,7 +16,7 @@ public class ClinicaServico {
     private List<Pagamento> pagamentos;
     private List<Double> multas;
     
-    // Coleção unificada para armazenar todas as pessoas (Pacientes e Profissionais)
+    // Lista de todas as pessoas (pacientes e profissionais)
     private List<Pessoa> todasAsPessoas;
 
     public ClinicaServico() {
@@ -29,12 +27,10 @@ public class ClinicaServico {
         this.atendimentos = new ArrayList<>();
         this.pagamentos = new ArrayList<>();
         this.multas = new ArrayList<>();
-        this.todasAsPessoas = new ArrayList<>(); //[cite: 31]
+        this.todasAsPessoas = new ArrayList<>();
     }
 
-    // ========================================
-    //               PACIENTES
-    // ========================================
+    // Pacientes
 
     public boolean cadastrarPaciente(Paciente paciente) {
         if (paciente == null) {
@@ -93,9 +89,7 @@ public class ClinicaServico {
         return cpf.replaceAll("\\D", "");
     }
 
-    // ========================================
-    //              PROFISSIONAIS
-    // ========================================
+    // Profissionais
 
     public boolean cadastrarProfissional(Profissional prof) {
         if (prof == null) {
@@ -103,7 +97,7 @@ public class ClinicaServico {
             return false;
         }
         profissionais.add(prof);
-        todasAsPessoas.add(prof); // Mantém a lista unificada sincronizada[cite: 31]
+        todasAsPessoas.add(prof); // mantém lista unificada
         System.out.println("Profissional cadastrado!");
         return true;
     }
@@ -184,9 +178,7 @@ public class ClinicaServico {
         }
     }
 
-    // ========================================
-    //                CONSULTAS
-    // ========================================
+    // Consultas
 
     public boolean agendarConsulta(Consulta consulta) {
         if (consulta == null) {
@@ -383,9 +375,7 @@ public class ClinicaServico {
         return 0;
     }
 
-    // ========================================
-    //              ATENDIMENTOS
-    // ========================================
+    // Atendimentos
 
     public boolean registrarAtendimento(Atendimento atendimento) {
         if (atendimento == null) {
@@ -414,9 +404,7 @@ public class ClinicaServico {
         }
     }
 
-    // ========================================
-    //               PAGAMENTOS
-    // ========================================
+    // Pagamentos
 
     public boolean registrarPagamento(Pagamento pagamento) {
         if (pagamento == null) {
@@ -557,9 +545,7 @@ public class ClinicaServico {
         return true;
     }
 
-    // ========================================
-    //         RELATÓRIOS ANALÍTICOS
-    // ========================================
+    // Relátorios e análises
 
     // Exibe um relatório contando quantos profissionais existem no sistema usando o operador instanceof.
     public void exibirContagemPorEspecialidade() {
@@ -589,26 +575,22 @@ public class ClinicaServico {
         System.out.println("Clínica Geral:  " + qtdClinicosGerais);
     }
 
-    // Lista detalhadamente os profissionais de uma subclasse específica (via Reflection).
+    // Lista profissionais por classe
     public void listarProfissionaisPorSubclasse(Class<? extends Profissional> tipoAlvo) {
-        System.out.println("\n=== LISTAGEM FILTRADA POR CLASSE REAL: " + tipoAlvo.getSimpleName() + " ===");
+        System.out.println("\n=== LISTAGEM POR CLASSE: " + tipoAlvo.getSimpleName() + " ===");
         boolean encontrou = false;
-        
         for (Pessoa p : todasAsPessoas) {
             if (tipoAlvo.isInstance(p)) {
-                p.exibirResumo(); 
+                p.exibirResumo();
                 encontrou = true;
             }
         }
-        
         if (!encontrou) {
-            System.out.println("Nenhum profissional do tipo " + tipoAlvo.getSimpleName() + " registrado no sistema.");
+            System.out.println("Nenhum profissional desse tipo registrado.");
         }
     }
 
-    // ========================================
-    //            RELATÓRIOS GERAIS
-    // ========================================
+    // RELATÓRIOS GERAIS
 
     public void gerarRelatorioGeral() {
         System.out.println("\n=== RELATORIO GERAL ===");
@@ -681,9 +663,7 @@ public class ClinicaServico {
         System.out.println("Total em multas: R$" + Math.round(totalEmMultas * 100.0) / 100.0);
     }
 
-    // ========================================
-    //      MÉTODOS AUXILIARES PRIVADOS
-    // ========================================
+    // MÉTODOS AUXILIARES PRIVADOS
 
     private String buscarDiagnosticoPorIndiceConsulta(int indiceConsulta) {
         for (Atendimento a : atendimentos) {
@@ -708,9 +688,7 @@ public class ClinicaServico {
         return ano * 10000 + mes * 100 + dia;
     }
 
-    // =============================================
     // GETTERS (para acesso aos dados se necessário)
-    // =============================================
 
     public int getQuantidadePacientes() { return pacientes.size(); }
     public int getQuantidadeProfissionais() { return profissionais.size(); }
@@ -720,4 +698,87 @@ public class ClinicaServico {
     public List<Paciente> getPacientes() { return pacientes; }
     public List<Profissional> getProfissionais() { return profissionais; }
     public List<Pessoa> getTodasAsPessoas() { return todasAsPessoas; }
+
+    // Relatórios de cancelamentos e multas
+    public void gerarRelatorioCancelamentos() {
+        System.out.println("\n=== RELATORIO DE CANCELAMENTOS ===");
+        boolean encontrou = false;
+        for (int i = 0; i < consultas.size(); i++) {
+            if ("cancelada".equals(consultas.get(i).status)) {
+                System.out.println("[" + i + "] " + consultas.get(i).exibirResumo());
+                encontrou = true;
+            }
+        }
+        if (!encontrou) System.out.println("Nenhum cancelamento registrado.");
+    }
+
+    public void gerarRelatorioMultas() {
+        System.out.println("\n=== RELATORIO DE MULTAS ===");
+        if (multas.isEmpty()) {
+            System.out.println("Nenhuma multa registrada.");
+            return;
+        }
+        double total = 0;
+        for (Double m : multas) {
+            System.out.println("Multa: R$" + Math.round(m * 100.0) / 100.0);
+            total += m;
+        }
+        System.out.println("---\nTotal em multas: R$" + Math.round(total * 100.0) / 100.0);
+    }
+
+    // Exportação de dados (apresentação simples na saída)
+    public void exportarConsultas() {
+        System.out.println("\n=== EXPORTACAO: CONSULTAS ===");
+        if (consultas.isEmpty()) { System.out.println("Nenhuma consulta para exportar."); return; }
+        for (Consulta c : consultas) {
+            if (c instanceof Exportavel) System.out.println(((Exportavel) c).exportarParaTexto());
+            else System.out.println(c.exibirResumo());
+            System.out.println("----");
+        }
+    }
+
+    public void exportarAtendimentos() {
+        System.out.println("\n=== EXPORTACAO: ATENDIMENTOS ===");
+        if (atendimentos.isEmpty()) { System.out.println("Nenhum atendimento para exportar."); return; }
+        for (Atendimento a : atendimentos) {
+            System.out.println(a.exibirResumo());
+            System.out.println("----");
+        }
+    }
+
+    public void exportarPagamentos() {
+        System.out.println("\n=== EXPORTACAO: PAGAMENTOS ===");
+        if (pagamentos.isEmpty()) { System.out.println("Nenhum pagamento para exportar."); return; }
+        for (Pagamento p : pagamentos) {
+            System.out.println(p.exibirResumo());
+            System.out.println("----");
+        }
+    }
+
+    public void exportarPacientes() {
+        System.out.println("\n=== EXPORTACAO: PACIENTES ===");
+        if (pacientes.isEmpty()) { System.out.println("Nenhum paciente para exportar."); return; }
+        for (Paciente p : pacientes) {
+            System.out.println(p.toString());
+            System.out.println("----");
+        }
+    }
+
+    public void exportarProfissionais() {
+        System.out.println("\n=== EXPORTACAO: PROFISSIONAIS ===");
+        if (profissionais.isEmpty()) { System.out.println("Nenhum profissional para exportar."); return; }
+        for (Profissional p : profissionais) {
+            System.out.println(p.toString());
+            System.out.println("----");
+        }
+    }
+
+    public void exportarTodasAsPessoas() {
+        System.out.println("\n=== EXPORTACAO: TODAS AS PESSOAS ===");
+        if (todasAsPessoas.isEmpty()) { System.out.println("Nenhuma pessoa registrada."); return; }
+        for (Pessoa p : todasAsPessoas) {
+            System.out.println(p.toString());
+            System.out.println("----");
+        }
+    }
 }

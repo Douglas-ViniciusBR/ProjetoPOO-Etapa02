@@ -14,6 +14,7 @@ public class Consulta implements Agendavel, Exportavel {
     public String horario;
     public String tipo;
     public String status;
+    public String motivoCancelamento;
 
     // sem tipo - assume inicial
     public Consulta(String cpfPaciente, String nomeProfissional, String data, String horario) {
@@ -54,16 +55,17 @@ public class Consulta implements Agendavel, Exportavel {
     @Override
     public void agendar(String data, String horario) {
         if (this.status != null && this.status.equals("realizada")) {
-            throw new IllegalStateException("Não é possível reagendar uma consulta já realizada.");
+            throw new AgendamentoException("Não é possível reagendar uma consulta já realizada.");
         }
 
         if (data == null || data.trim().isEmpty() || horario == null || horario.trim().isEmpty()) {
-            throw new IllegalArgumentException("Data e horário são obrigatórios para agendar.");
+            throw new AgendamentoException("Data e horário são obrigatórios para agendar.");
         }
 
         this.data = data;
         this.horario = horario;
         this.status = "agendada";
+        this.motivoCancelamento = null;
     }
 
     /**
@@ -75,10 +77,11 @@ public class Consulta implements Agendavel, Exportavel {
     @Override
     public void cancelar() {
         if ("realizada".equals(this.status)) {
-            throw new IllegalStateException("Não é possível cancelar uma consulta já realizada.");
+            throw new AgendamentoException("Não é possível cancelar uma consulta já realizada.");
         }
 
         this.status = "cancelada";
+        this.motivoCancelamento = null;
     }
 
     /**
@@ -87,7 +90,11 @@ public class Consulta implements Agendavel, Exportavel {
      */
     public String cancelar(String motivo) {
         cancelar();
-        return "Consulta cancelada. Motivo: " + motivo;
+        if (motivo != null && !motivo.trim().isEmpty()) {
+            this.motivoCancelamento = motivo.trim();
+            return "Consulta cancelada. Motivo: " + motivo.trim();
+        }
+        return "Consulta cancelada.";
     }
 
     @Override
@@ -111,7 +118,7 @@ public class Consulta implements Agendavel, Exportavel {
      */
     public void remarcar() {
         if ("realizada".equals(this.status)) {
-            throw new IllegalStateException("Não é possível remarcar uma consulta já realizada.");
+            throw new AgendamentoException("Não é possível remarcar uma consulta já realizada.");
         }
 
         this.status = "remarcada";
@@ -124,7 +131,7 @@ public class Consulta implements Agendavel, Exportavel {
      */
     public void remarcar(String novaData, String novoHorario) {
         if ("realizada".equals(this.status)) {
-            throw new IllegalStateException("Não é possível remarcar uma consulta já realizada.");
+            throw new AgendamentoException("Não é possível remarcar uma consulta já realizada.");
         }
 
         agendar(novaData, novoHorario);
@@ -135,7 +142,7 @@ public class Consulta implements Agendavel, Exportavel {
      */
     public void realizar() {
         if (!isAgendada()) {
-            throw new IllegalStateException("Só é possível realizar uma consulta agendada.");
+            throw new AgendamentoException("Só é possível realizar uma consulta agendada.");
         }
         this.status = "realizada";
     }
