@@ -52,13 +52,34 @@ public abstract class Profissional extends Pessoa {
 
     // verifica se o profissional atende naquele dia
     public boolean atendeNoDia(String dia) {
-        if (dia == null) return false;
+        if (dia == null || dia.trim().isEmpty()) return false;
+        String diaNormalizado = dia.trim().toLowerCase();
         for (int i = 0; i < totalDias; i++) {
-            if (diasDisponiveis[i] != null && diasDisponiveis[i].equals(dia)) {
+            if (diasDisponiveis[i] != null && diasDisponiveis[i].toLowerCase().equals(diaNormalizado)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public String[] getDiasDisponiveis() {
+        return diasDisponiveis.clone();
+    }
+
+    public String getDiasDisponiveisFormatados() {
+        if (totalDias == 0) {
+            return "nenhum dia definido";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < totalDias; i++) {
+            if (diasDisponiveis[i] != null) {
+                if (builder.length() > 0) {
+                    builder.append(", ");
+                }
+                builder.append(diasDisponiveis[i]);
+            }
+        }
+        return builder.toString();
     }
 
     public String getEspecialidade() {
@@ -106,6 +127,7 @@ public abstract class Profissional extends Pessoa {
     public void setDias(String[] dias, int totalDias) {
         if (dias == null) {
             this.totalDias = 0;
+            this.diasDisponiveis = new String[7];
             return;
         }
         if (totalDias < 0 || totalDias > dias.length || totalDias > 7) {
@@ -114,8 +136,10 @@ public abstract class Profissional extends Pessoa {
         this.diasDisponiveis = new String[7];
         this.totalDias = totalDias;
         for (int i = 0; i < totalDias; i++) {
-            if (dias[i] == null) throw new IllegalArgumentException("Dia inválido em posição: " + i);
-            this.diasDisponiveis[i] = dias[i];
+            if (dias[i] == null || dias[i].trim().isEmpty()) {
+                throw new IllegalArgumentException("Dia inválido em posição: " + i);
+            }
+            this.diasDisponiveis[i] = dias[i].trim().toLowerCase();
         }
     }
 

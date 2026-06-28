@@ -106,12 +106,52 @@ public class ClinicaServico {
     }
 
     public Profissional buscarProfissionalPorNome(String nome) {
+        if (nome == null) return null;
         for (Profissional p : profissionais) {
-            if (p.getNome().equals(nome)) {
+            if (p.getNome().equalsIgnoreCase(nome.trim())) {
                 return p;
             }
         }
         return null;
+    }
+
+    public Profissional buscarProfissionalPorCpf(String cpf) {
+        if (cpf == null) return null;
+        for (Profissional p : profissionais) {
+            if (p.getCpf().equals(cpf.trim())) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public boolean atualizarProfissional(String cpf, String registro, double valor, String[] dias, int totalDias) {
+        Profissional prof = buscarProfissionalPorCpf(cpf);
+        if (prof == null) {
+            System.out.println("Profissional nao encontrado.");
+            return false;
+        }
+        if (registro != null && !registro.trim().isEmpty()) {
+            prof.setRegistroProfissional(registro);
+        }
+        if (valor >= 0) {
+            prof.setValorConsulta(valor);
+        }
+        if (dias != null) {
+            prof.setDias(dias, totalDias);
+        }
+        System.out.println("Profissional atualizado com sucesso.");
+        return true;
+    }
+
+    public boolean existeProfissionalComEspecialidade(String especialidade) {
+        if (especialidade == null) return false;
+        for (Profissional p : profissionais) {
+            if (p.getEspecialidade().equalsIgnoreCase(especialidade.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void listarProfissionais() {

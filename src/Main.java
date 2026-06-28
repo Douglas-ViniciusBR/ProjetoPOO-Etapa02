@@ -122,8 +122,9 @@ public class Main {
             try {
                 System.out.println("\n--- PROFISSIONAIS ---");
                 System.out.println("1 - Cadastrar");
-                System.out.println("2 - Listar todos");
-                System.out.println("3 - Filtrar por especialidade");
+                System.out.println("2 - Atualizar profissional");
+                System.out.println("3 - Listar todos");
+                System.out.println("4 - Filtrar por especialidade");
                 System.out.println("0 - Voltar");
                 op = lerInt("Opcao: ");
 
@@ -147,9 +148,12 @@ public class Main {
                         servico.cadastrarProfissional(prof);
                         break;
                     case 2:
-                        servico.listarProfissionais();
+                        menuAtualizarProfissional();
                         break;
                     case 3:
+                        servico.listarProfissionais();
+                        break;
+                    case 4:
                         System.out.print("Especialidade: ");
                         esp = sc.nextLine();
                         servico.filtrarProfissionaisPorEspecialidade(esp);
@@ -212,6 +216,58 @@ public class Main {
         return new ClinicoGeral(nome, cpf);
     }
 
+    public static void menuAtualizarProfissional() {
+        System.out.print("CPF do profissional: ");
+        String cpf = sc.nextLine();
+        Profissional prof = servico.buscarProfissionalPorCpf(cpf);
+        if (prof == null) {
+            System.out.println("Profissional nao encontrado.");
+            return;
+        }
+
+        System.out.println("Atualizando: " + prof.getNome() + " (" + prof.getEspecialidade() + ")");
+        System.out.println("Registro atual: " + prof.getRegistroProfissional());
+        System.out.println("Valor atual: " + prof.getValorConsulta());
+        System.out.println("Dias atuais: " + prof.getDiasDisponiveisFormatados());
+
+        System.out.print("Novo registro (enter para manter): ");
+        String registro = sc.nextLine();
+        double valor = -1;
+        System.out.print("Novo valor (deixe vazio para manter): ");
+        String valorTexto = sc.nextLine();
+        if (!valorTexto.trim().isEmpty()) {
+            try {
+                valor = Double.parseDouble(valorTexto);
+            } catch (NumberFormatException e) {
+                System.out.println("Valor inválido. Mantendo valor atual.");
+                valor = prof.getValorConsulta();
+            }
+        } else {
+            valor = prof.getValorConsulta();
+        }
+
+        System.out.print("Definir dias de atendimento agora? (1-Sim / 2-Nao): ");
+        int defineDias = lerInt("");
+        String[] dias = null;
+        int totalDias = 0;
+        if (defineDias == 1) {
+            totalDias = lerInt("Quantos dias atende? ");
+            dias = new String[totalDias];
+            for (int i = 0; i < totalDias && i < dias.length; i++) {
+                System.out.print("Dia " + (i + 1) + ": ");
+                dias[i] = sc.nextLine();
+            }
+        }
+
+        if (servico.atualizarProfissional(cpf,
+                registro.trim().isEmpty() ? null : registro,
+                valor,
+                dias,
+                totalDias)) {
+            System.out.println("Profissional atualizado com sucesso.");
+        }
+    }
+
     // ========== CONSULTAS ==========
 
     public static void menuConsultas() {
@@ -239,9 +295,29 @@ public class Main {
                             break;
                         }
 
-                        System.out.print("Nome do profissional: ");
-                        String nomeProf = sc.nextLine();
-                        Profissional prof = servico.buscarProfissionalPorNome(nomeProf);
+                        System.out.println("1 - Agendar por profissional");
+                        System.out.println("2 - Agendar por especialidade");
+                        int modo = lerInt("Opcao: ");
+                        Profissional prof = null;
+                        String nomeProf = "";
+                        if (modo == 2) {
+                            System.out.print("Especialidade: ");
+                            String esp = sc.nextLine();
+                            if (!Profissional.especialidadeValida(esp)) {
+                                System.out.println("Especialidade invalida.");
+                                break;
+                            }
+                            System.out.println("Profissionais disponiveis para " + esp + ":");
+                            servico.filtrarProfissionaisPorEspecialidade(esp);
+                            System.out.print("Nome do profissional escolhido: ");
+                            nomeProf = sc.nextLine();
+                            prof = servico.buscarProfissionalPorNome(nomeProf);
+                        } else {
+                            System.out.print("Nome do profissional: ");
+                            nomeProf = sc.nextLine();
+                            prof = servico.buscarProfissionalPorNome(nomeProf);
+                        }
+
                         if (prof == null) {
                             System.out.println("Profissional nao encontrado.");
                             break;
@@ -258,7 +334,7 @@ public class Main {
 
                         String diaSemana = servico.descobrirDiaSemana(data);
                         if (!prof.atendeNoDia(diaSemana)) {
-                            System.out.println("Profissional nao atende nesse dia.");
+                            System.out.println("Profissional nao atende nesse dia. Dias: " + prof.getDiasDisponiveisFormatados());
                             break;
                         }
 
@@ -279,7 +355,8 @@ public class Main {
                             }
                         }
 
-                        Consulta consulta = new Consulta(cpf, nomeProf, data, horario);
+                        String tipoConsulta = prof.getEspecialidade();
+                        Consulta consulta = new Consulta(cpf, nomeProf, data, horario, tipoConsulta);
                         servico.agendarConsulta(consulta);
                         break;
                     case 2:
